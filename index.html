@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ScreensLocalz Pro v1</title>
+<title>ScreenLoc Pro v3</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -263,6 +263,8 @@ select.finput option{background:#1a1d2e}
 @keyframes tOut{to{opacity:0}}
 ::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px}
 code{background:var(--panel2);padding:1px 4px;border-radius:3px;font-size:10px;font-family:monospace;color:var(--muted2)}
+.finput[rows]{resize:vertical;min-height:60px}
+.grad-stop-row{display:flex;align-items:center;gap:5px;margin-bottom:4px}
 </style>
 </head>
 <body>
@@ -373,7 +375,7 @@ code{background:var(--panel2);padding:1px 4px;border-radius:3px;font-size:10px;f
     </div>
 
     <div style="display:flex;justify-content:space-between;align-items:center">
-      <div style="font-size:11px;color:var(--muted)"><b style="color:var(--text)">✶ Built like a weapon, use like a tool. ✶</b> - by ex-code warrior</div>
+      <div style="font-size:11px;color:var(--muted)"><b style="color:var(--text)">✶ Built like a weapon, use like a tool. ✶</b> - by ex-code warrior Ⓜ</div>
     </div>
 
   </div>
@@ -486,6 +488,7 @@ code{background:var(--panel2);padding:1px 4px;border-radius:3px;font-size:10px;f
       <div style="font-size:11px;color:var(--muted)"><b style="color:var(--text)">✶ Built like a weapon, use like a tool. ✶</b> - by ex-code warrior</div>
     </div>
 
+
   </div>
 </div>
 
@@ -528,9 +531,9 @@ const ST={
 };
 let undoStack=[],redoStack=[];
 const MAX_UNDO=40;
-const DEF=()=>({key:'',fontFamily:'sans-serif',fontSize:44,color:'#ffffff',colorOpacity:100,align:'center',valign:'middle',bold:false,italic:false,lineSpacing:1.0,letterSpacing:0,rotation:0,wordWrap:true,autoFit:true,maxLines:0,padding:6,shadow:false,shadowColor:'#000000',shadowOpacity:65,shadowBlur:8,shadowOffsetX:3,shadowOffsetY:3,stroke:false,strokeColor:'#000000',strokeWidth:2,bg:false,bgColor:'#000000',bgOpacity:50,bgPadding:8,bgRadius:6,rtl:false});
+const DEF=()=>({key:'',fontFamily:'sans-serif',fontSize:44,color:'#ffffff',colorOpacity:100,align:'center',valign:'middle',bold:false,italic:false,fontWeight:'medium',lineSpacing:1.0,letterSpacing:0,rotation:0,wordWrap:true,autoFit:true,maxLines:0,padding:6,shadow:false,shadowColor:'#000000',shadowOpacity:65,shadowBlur:8,shadowOffsetX:3,shadowOffsetY:3,stroke:false,strokeColor:'#000000',strokeWidth:2,bg:false,bgColor:'#000000',bgOpacity:50,bgPadding:8,bgRadius:6,rtl:false,gradient:false,gradientColors:['#6C8EFF','#A78BFA'],gradientDir:'horizontal',gradientStops:[0,100],multiColor:false,multiSegments:'Secure|#FFFFFF|44|0|50||100|0\nAny App|#FFD400|32|1|50||100|0'});
 const MIN_FS=10;
-const OPEN_SECS={key:true,dims:false,font:true,textstyle:true,layout:true,shadow:false,stroke:false,bgbox:false,rtl:false,presets:false};
+const OPEN_SECS={key:true,dims:false,font:true,textstyle:true,layout:true,shadow:false,stroke:false,bgbox:false,rtl:false,gradient:false,multicolor:false,presets:false};
 let drawing=false,drawStart=null,dragging=false,dragBox=null,dragOff=null,resizing=false,resizeBox=null,resizeStart=null;
 let curStep=1;
 
@@ -911,7 +914,7 @@ function attachEvents(wrap){
 
 // ════ PRESETS ════
 function showSavePresetModal(){if(!ST.selId){toast('Select a box first','err');return;}document.getElementById('presetNameInput').value='';document.getElementById('presetModal').style.display='flex';setTimeout(()=>document.getElementById('presetNameInput').focus(),60);}
-function confirmSavePreset(){const name=document.getElementById('presetNameInput').value.trim();if(!name){toast('Enter a name','err');return;}const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box){closeModal('presetModal');return;}const style={fontFamily:box.fontFamily,fontSize:box.fontSize,color:box.color,colorOpacity:box.colorOpacity,align:box.align,valign:box.valign,bold:box.bold,italic:box.italic,lineSpacing:box.lineSpacing,letterSpacing:box.letterSpacing,rotation:box.rotation,wordWrap:box.wordWrap,autoFit:box.autoFit,maxLines:box.maxLines,padding:box.padding,shadow:box.shadow,shadowColor:box.shadowColor,shadowOpacity:box.shadowOpacity,shadowBlur:box.shadowBlur,shadowOffsetX:box.shadowOffsetX,shadowOffsetY:box.shadowOffsetY,stroke:box.stroke,strokeColor:box.strokeColor,strokeWidth:box.strokeWidth,bg:box.bg,bgColor:box.bgColor,bgOpacity:box.bgOpacity,bgPadding:box.bgPadding,bgRadius:box.bgRadius,rtl:box.rtl};ST.presets.push({name,color:box.color||'#6C8EFF',style});closeModal('presetModal');toast(`Preset "${name}" saved`,'ok');renderProps();}
+function confirmSavePreset(){const name=document.getElementById('presetNameInput').value.trim();if(!name){toast('Enter a name','err');return;}const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box){closeModal('presetModal');return;}const style={fontFamily:box.fontFamily,fontSize:box.fontSize,color:box.color,colorOpacity:box.colorOpacity,align:box.align,valign:box.valign,bold:box.bold,italic:box.italic,fontWeight:box.fontWeight||'bold',lineSpacing:box.lineSpacing,letterSpacing:box.letterSpacing,rotation:box.rotation,wordWrap:box.wordWrap,autoFit:box.autoFit,maxLines:box.maxLines,padding:box.padding,shadow:box.shadow,shadowColor:box.shadowColor,shadowOpacity:box.shadowOpacity,shadowBlur:box.shadowBlur,shadowOffsetX:box.shadowOffsetX,shadowOffsetY:box.shadowOffsetY,stroke:box.stroke,strokeColor:box.strokeColor,strokeWidth:box.strokeWidth,bg:box.bg,bgColor:box.bgColor,bgOpacity:box.bgOpacity,bgPadding:box.bgPadding,bgRadius:box.bgRadius,rtl:box.rtl,gradient:box.gradient||false,gradientColors:box.gradientColors||['#6C8EFF','#A78BFA'],gradientDir:box.gradientDir||'horizontal',gradientStops:box.gradientStops||[0,100],multiColor:box.multiColor||false,multiSegments:box.multiSegments||''};ST.presets.push({name,color:box.color||'#6C8EFF',gradient:box.gradient||false,gradientColors:box.gradientColors,style});closeModal('presetModal');toast(`Preset "${name}" saved`,'ok');renderProps();}
 function applyPreset(i){const preset=ST.presets[i];if(!preset)return;const boxes=getCurBoxes();const ids=ST.multiSel.length>1?ST.multiSel:[ST.selId];ids.forEach(id=>{const box=boxes.find(b=>b.id===id);if(box)Object.assign(box,preset.style);});setCurBoxes(boxes);snapshot();renderCanvas();renderProps();drawPrevOverlay();invalidateCache();toast(`Preset "${preset.name}" applied`,'ok');}
 function deletePreset(i){ST.presets.splice(i,1);renderProps();}
 
@@ -938,17 +941,90 @@ function renderProps(){
 
   const keyContent=`<div class="field"><div class="field-label">CSV Key</div><select class="finput" style="border-color:var(--accent)" onchange="updBox('key',this.value);renderProps();drawPrevOverlay()"><option value="">— Select key —</option>${keyOpts}</select></div>${overflowLangs.length?`<div style="background:#ff576b12;border:1px solid var(--red)33;border-radius:var(--rs);padding:7px 9px;font-size:10.5px;color:var(--red)">⚠ Too small in: ${overflowLangs.join(', ')}</div>`:''}${row?`<div class="key-preview">${['en',...(ST.csv?.langs||[])].filter(l=>row[l]).slice(0,6).map(l=>`<div class="kp-row"><span class="kp-lang${overflowLangs.includes(l)?' warn-lang':''}">${l}</span><span class="kp-val${l==='en'?' en':''}">${(row[l]||'').slice(0,44)}…</span></div>`).join('')}</div>`:`<div style="font-size:10px;color:var(--muted)">Select a key to preview</div>`}`;
   const dimsContent=`<div class="dim-badge"><div class="field" style="flex:1"><div class="field-label">W</div><div class="dim-val">${bwPx}px</div></div><div style="font-size:10px;color:var(--muted);margin-top:14px">×</div><div class="field" style="flex:1"><div class="field-label">H</div><div class="dim-val">${bhPx}px</div></div></div>`;
-  const fontContent=`<div class="field"><div class="field-label">Font Family</div><select class="finput" onchange="updBox('fontFamily',this.value);renderProps();drawPrevOverlay()">${fontOpts}</select></div>${fontPreviewHtml}${sl('Size (px)','fontSize',6,300,1,box?.fontSize??44,'px')}<div class="field-row"><div class="field"><div class="field-label">Bold</div><div class="btn-group"><div class="bg-btn${box?.bold?' on':''}" onclick="updBox('bold',${!box?.bold});renderProps();drawPrevOverlay()"><b>B</b></div></div></div><div class="field"><div class="field-label">Italic</div><div class="btn-group"><div class="bg-btn${box?.italic?' on':''}" onclick="updBox('italic',${!box?.italic});renderProps();drawPrevOverlay()"><i>I</i></div></div></div></div>`;
+  const fw=box?.fontWeight||'bold';
+  const fontContent=`<div class="field"><div class="field-label">Font Family</div><select class="finput" onchange="updBox('fontFamily',this.value);renderProps();drawPrevOverlay()">${fontOpts}</select></div>${fontPreviewHtml}${sl('Size (px)','fontSize',6,300,1,box?.fontSize??44,'px')}<div class="field"><div class="field-label">Weight</div><div class="btn-group" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr"><div class="bg-btn${fw==='medium'?' on':''}" onclick="updBox('fontWeight','medium');renderProps();drawPrevOverlay()" title="Medium 400" style="font-weight:400;font-size:10.5px">M</div><div class="bg-btn${fw==='semibold'?' on':''}" onclick="updBox('fontWeight','semibold');renderProps();drawPrevOverlay()" title="Semi Bold 600" style="font-weight:600;font-size:10.5px">SB</div><div class="bg-btn${fw==='bold'?' on':''}" onclick="updBox('fontWeight','bold');renderProps();drawPrevOverlay()" title="Bold 700" style="font-weight:700;font-size:10.5px">B</div><div class="bg-btn${fw==='extrabold'?' on':''}" onclick="updBox('fontWeight','extrabold');renderProps();drawPrevOverlay()" title="Extra Bold 800" style="font-weight:800;font-size:10.5px">XB</div></div></div><div class="field"><div class="field-label">Style</div><div class="btn-group"><div class="bg-btn${box?.italic?' on':''}" onclick="updBox('italic',${!box?.italic});renderProps();drawPrevOverlay()"><i>I</i></div></div></div>`;
   const tsContent=`${cc('Color','color',box?.color||'#ffffff')}${sl('Opacity','colorOpacity',0,100,1,box?.colorOpacity??100,'%','var(--cyan)')}<div class="field"><div class="field-label">H-Align</div>${bgr('align',[['left','⬅ L'],['center','C'],['right','R ➡']],box?.align)}</div><div class="field"><div class="field-label">V-Align</div>${bgr('valign',[['top','⬆ Top'],['middle','Mid'],['bottom','Bot ⬇']],box?.valign)}</div>${sl('Line Spacing','lineSpacing',0.6,3,0.05,box?.lineSpacing??1.0,'×','var(--accent2)')}${sl('Letter Spacing','letterSpacing',-8,40,1,box?.letterSpacing||0,'px')}${sl('Rotation','rotation',-180,180,1,box?.rotation||0,'°','var(--orange)')}${sl('Padding','padding',0,60,1,box?.padding??6,'px')}`;
   const layoutContent=`${tog('Word Wrap','Break long text into multiple lines','wordWrap',box?.wordWrap??true)}${tog('Auto-fit Font Size','Shrinks font to fit the box','autoFit',box?.autoFit??true)}<div class="${(box?.autoFit??true)?'dim':''}">${sl('Max Lines (0 = unlimited)','maxLines',0,20,1,box?.maxLines||0,'')}</div>`;
   const shadowContent=`${tog('Enable Shadow','','shadow',box?.shadow??false)}<div class="${box?.shadow?'':'dim'}">${cc('Color','shadowColor',box?.shadowColor||'#000000')}${sl('Opacity','shadowOpacity',0,100,1,box?.shadowOpacity??65,'%','var(--cyan)')}${sl('Blur','shadowBlur',0,80,1,box?.shadowBlur??8,'px')}<div class="field-row">${sl('Offset X','shadowOffsetX',-60,60,1,box?.shadowOffsetX??3,'px')}${sl('Offset Y','shadowOffsetY',-60,60,1,box?.shadowOffsetY??3,'px')}</div></div>`;
   const strokeContent=`${tog('Enable Stroke','','stroke',box?.stroke??false)}<div class="${box?.stroke?'':'dim'}">${cc('Color','strokeColor',box?.strokeColor||'#000000')}${sl('Width','strokeWidth',0.5,30,0.5,box?.strokeWidth??2,'px')}</div>`;
   const bgContent=`${tog('Enable Background','','bg',box?.bg??false)}<div class="${box?.bg?'':'dim'}">${cc('Color','bgColor',box?.bgColor||'#000000')}${sl('Opacity','bgOpacity',0,100,1,box?.bgOpacity??50,'%','var(--cyan)')}${sl('Padding','bgPadding',0,60,1,box?.bgPadding??8,'px')}${sl('Radius','bgRadius',0,60,1,box?.bgRadius??6,'px')}</div>`;
   const rtlContent=`${tog('Force RTL','For Arabic, Hebrew, Persian…','rtl',box?.rtl??false)}<div style="height:4px"></div><div class="field"><div class="field-label" style="color:var(--accent2)">Per-Language Font Override</div>${(ST.csv?.langs||[]).map(l=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span style="font-size:9.5px;font-weight:700;font-family:monospace;color:${isRTL(l)?'var(--orange)':'var(--muted2)'};min-width:26px">${l}</span><select class="finput" style="flex:1;font-size:11px" onchange="setLangFont('${l}',this.value)"><option value="">Default</option>${ST.fonts.map(f=>`<option value="${f.familyName}"${ST.langFonts[l]===f.familyName?' selected':''}>${f.source==='google'?'🌐 ':''}${f.name}</option>`).join('')}</select></div>`).join('')}</div>`;
-  const presetsContent=`<button class="btn sm" style="width:100%;justify-content:center;margin-bottom:6px" onclick="showSavePresetModal()">💾 Save Style as Preset</button>${ST.presets.length?`<div class="preset-grid">${ST.presets.map((p,i)=>`<div class="preset-item" onclick="applyPreset(${i})"><div class="preset-dot" style="background:${p.color}"></div><div class="preset-name">${p.name}</div><div class="preset-apply">Apply</div><div class="preset-del" onclick="event.stopPropagation();deletePreset(${i})">×</div></div>`).join('')}</div>`:`<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:6px">No presets saved yet.</div>`}`;
+  const presetsContent=`<div style="display:flex;gap:5px;margin-bottom:6px"><button class="btn sm" style="flex:1;justify-content:center" onclick="showSavePresetModal()">💾 Save Style</button><button class="btn sm" style="flex:1;justify-content:center" onclick="exportPresets()">⬇ Export</button><label class="btn sm" style="flex:1;justify-content:center;cursor:pointer">⬆ Import<input type="file" accept=".json,.csv" style="display:none" onchange="importPresets(event)"></label></div>${ST.presets.length?`<div class="preset-grid">${ST.presets.map((p,i)=>`<div class="preset-item" onclick="applyPreset(${i})"><div class="preset-dot" style="background:${p.gradient?`linear-gradient(90deg,${(p.gradientColors||['#6C8EFF','#A78BFA']).join(',')})`:p.color}"></div><div class="preset-name">${p.name}</div><div class="preset-apply">Apply</div><div class="preset-del" onclick="event.stopPropagation();deletePreset(${i})">×</div></div>`).join('')}</div>`:`<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:6px">No presets saved yet.</div>`}`;
 
-  pb.innerHTML=acc('key','var(--green)','① Key',overflowLangs.length?'warn':null,keyContent)+acc('dims','var(--cyan)','② Dimensions',null,dimsContent)+acc('font','var(--accent2)','③ Font',null,fontContent)+acc('textstyle','var(--accent)','④ Text Style',null,tsContent)+acc('layout','var(--orange)','⑤ Layout & Fit',null,layoutContent)+acc('shadow','#FF9B5E','⑥ Shadow',box?.shadow?'on':'off',shadowContent)+acc('stroke','#FF576B','⑦ Stroke',box?.stroke?'on':'off',strokeContent)+acc('bgbox','#A78BFA','⑧ Background',box?.bg?'on':'off',bgContent)+acc('rtl','var(--yellow)','⑨ RTL & Lang Fonts',null,rtlContent)+acc('presets','var(--green)','⑩ Presets',null,presetsContent)+`<div style="padding:9px 11px 11px;display:flex;gap:5px"><button class="btn sm${isLocked?' primary':''}" style="flex:1;justify-content:center" onclick="toggleLock('${box?.id}')">${isLocked?'🔓 Unlock':'🔒 Lock'}</button><button class="btn danger sm" style="flex:1;justify-content:center" onclick="snapshot();rmBox('${box?.id}')">🗑 Delete</button></div>`;
-  if(box?.shadow)OPEN_SECS.shadow=true;if(box?.stroke)OPEN_SECS.stroke=true;if(box?.bg)OPEN_SECS.bgbox=true;if(overflowLangs.length)OPEN_SECS.key=true;
+  const gdir=box?.gradientDir||'horizontal';
+  const gColors=box?.gradientColors||['#6C8EFF','#A78BFA'];
+  const gStops=box?.gradientStops||gColors.map((_,i)=>Math.round(i/(gColors.length-1)*100));
+  const gCssDir=gdir==='vertical'?'to bottom':gdir==='diagonal'?'135deg':gdir==='diag2'?'225deg':(gdir==='radial'||gdir==='center')?'circle':'to right';
+  const gStopsStr=gColors.map((c,i)=>`${c} ${gStops[i]??Math.round(i/(gColors.length-1)*100)}%`).join(',');
+  const gBarBg=(gdir==='radial'||gdir==='center')?`radial-gradient(${gCssDir}, ${gStopsStr})`:`linear-gradient(${gCssDir}, ${gStopsStr})`;
+  const gradientContent=`${tog('Enable Gradient Text','Replaces solid color with gradient','gradient',box?.gradient??false)}<div class="${box?.gradient?'':'dim'}"><div id="gradPreviewBar" style="height:20px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);background:${gBarBg}"></div><div class="field"><div class="field-label">Direction</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:3px"><div class="bg-btn${gdir==='horizontal'?' on':''}" onclick="updBox('gradientDir','horizontal');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">→ H</div><div class="bg-btn${gdir==='vertical'?' on':''}" onclick="updBox('gradientDir','vertical');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↓ V</div><div class="bg-btn${gdir==='diagonal'?' on':''}" onclick="updBox('gradientDir','diagonal');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↘ D1</div><div class="bg-btn${gdir==='diag2'?' on':''}" onclick="updBox('gradientDir','diag2');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↙ D2</div><div class="bg-btn${gdir==='radial'?' on':''}" onclick="updBox('gradientDir','radial');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">◎ Radial</div><div class="bg-btn${gdir==='center'?' on':''}" onclick="updBox('gradientDir','center');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">⊡ Center</div></div></div><div class="field"><div class="field-label">Color Stops</div><div id="gradStopsUI">${gColors.map((c,i)=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:5px"><label class="color-swatch grad-swatch" style="background:${c};width:26px;height:26px;flex-shrink:0;cursor:pointer"><input type="color" value="${c}" oninput="updGradColor(${i},this.value)"></label><input class="color-hex" type="text" value="${c}" placeholder="#rrggbb" style="flex:1;font-size:11px" oninput="updGradColor(${i},this.value.trim())"><span style="font-size:9px;color:var(--muted);flex-shrink:0">pos%</span><input class="slider-num" type="number" min="0" max="100" value="${gStops[i]??Math.round(i/(gColors.length-1)*100)}" style="width:44px;flex-shrink:0" oninput="updGradStop(${i},parseInt(this.value)||0)">${gColors.length>2?`<button onclick="rmGradStop(${i})" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;flex-shrink:0">×</button>`:''}</div>`).join('')}</div><button class="btn sm" style="width:100%;justify-content:center" onclick="addGradStop()">+ Add Color Stop</button></div></div>`;
+  const mcSegs=parseSegments(box?.multiSegments||'');
+  // Build preview — group by newline, respect per-segment align
+  let mcPreviewHtml='';
+  if(mcSegs.length){
+    const lineGroups=[];let curGrp=[];
+    mcSegs.forEach(s=>{if(s.newline&&curGrp.length){lineGroups.push(curGrp);curGrp=[];}curGrp.push(s);});
+    if(curGrp.length)lineGroups.push(curGrp);
+    const fwMap2={medium:'400',semibold:'600',bold:'700',extrabold:'800'};
+    const lineHtml=lineGroups.map(grp=>{
+      const off=grp[0]?.offset??50;
+      const spans=grp.map(s=>{
+        const segW=s.weight||box?.fontWeight||'medium';
+        const fwCss=fwMap2[segW]||'400';
+        const op=(s.opacity!==undefined?s.opacity:100)/100;
+        return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fwCss};opacity:${op};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
+      }).join('<span style="font-size:3px"> </span>');
+      return`<div style="display:flex;white-space:nowrap;padding:1px 0;transform:translateX(${off}%)">${spans}</div>`;
+    }).join('');
+    mcPreviewHtml=`<div id="mcPreviewBar" style="background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);padding:6px 10px;margin-bottom:8px;display:flex;flex-direction:column;overflow:hidden;min-height:28px">${lineHtml}</div>`;
+  }
+
+  const mcRows=mcSegs.length?mcSegs.map((seg,i)=>{
+    const isNL=!!seg.newline;
+    const segOff=seg.offset!==undefined?seg.offset:50;
+    const segWt=seg.weight||'';
+    const segOp=seg.opacity!==undefined?seg.opacity:100;
+    const isBold=segWt==='bold';
+    return `<div style="background:${isNL?'#6c8eff0f':'var(--panel2)'};border:1px solid ${isNL?'var(--accent)33':'var(--border2)'};border-radius:var(--rs);padding:6px 8px;margin-bottom:5px">
+  <div style="display:flex;align-items:center;gap:4px;margin-bottom:5px">
+    <label class="mc-swatch" style="width:26px;height:26px;flex-shrink:0;cursor:pointer;border-radius:5px;border:1px solid var(--border2);overflow:hidden;position:relative;background:${seg.color||'#fff'}"><input type="color" value="${seg.color||'#ffffff'}" style="position:absolute;inset:-8px;width:calc(100%+16px);height:calc(100%+16px);opacity:0;cursor:pointer" oninput="updSegColor(${i},this.value)"></label>
+    <input class="finput" type="text" value="${seg.text}" placeholder="Text…" style="flex:1;min-width:0;font-size:11px" oninput="updSegText(${i},this.value)">
+    <input class="slider-num" type="number" value="${seg.size||box?.fontSize||44}" min="6" max="300" style="width:44px;flex-shrink:0" title="Font size px" oninput="updSegSize(${i},this.value)">
+    <span style="font-size:9px;color:var(--muted);flex-shrink:0">px</span>
+    <button onclick="toggleSegNewline(${i})" title="${isNL?'New line ON — click to inline':'Click: start new line here'}" style="background:${isNL?'var(--accent)':'var(--panel3)'};border:1px solid ${isNL?'var(--accent)':'var(--border2)'};color:${isNL?'#fff':'var(--muted2)'};border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:2px 5px;flex-shrink:0;line-height:1">↵</button>
+    <button onclick="rmSeg(${i})" title="Delete this segment" style="background:var(--red);border:none;color:#fff;border-radius:4px;cursor:pointer;font-size:11px;font-weight:700;padding:2px 7px;flex-shrink:0;line-height:1.4">🗑</button>
+  </div>
+  <div style="margin-bottom:5px">
+    <div style="display:flex;align-items:center;gap:6px">
+      <span style="font-size:9px;color:var(--muted);flex-shrink:0;width:34px">Pos</span>
+      <div style="flex:1;position:relative">
+        <input type="range" min="0" max="100" step="1" value="${segOff}" style="width:100%;accent-color:var(--accent);cursor:pointer;height:4px" oninput="updSegOffset(${i},this.value)">
+        <div style="display:flex;justify-content:space-between;margin-top:1px;padding:0 1px">
+          <span style="font-size:8px;color:var(--muted);cursor:pointer" onclick="updSegOffset(${i},0);this.closest('div').previousElementSibling.value=0" title="Snap left">L</span>
+          <span style="font-size:8px;color:var(--muted);cursor:pointer" onclick="updSegOffset(${i},50);this.closest('div').previousElementSibling.value=50" title="Snap center">C</span>
+          <span style="font-size:8px;color:var(--muted);cursor:pointer" onclick="updSegOffset(${i},100);this.closest('div').previousElementSibling.value=100" title="Snap right">R</span>
+        </div>
+      </div>
+      <span data-segoff="${i}" style="font-size:10px;color:var(--accent);font-family:monospace;width:34px;text-align:right;flex-shrink:0">${Math.round(segOff)}%</span>
+    </div>
+  </div>
+  <div style="display:flex;gap:4px;margin-bottom:4px">
+    <button onclick="toggleSegBold(${i})" title="Bold" style="padding:3px 8px;border-radius:3px;border:1px solid ${isBold?'var(--accent2)':'var(--border2)'};background:${isBold?'var(--accent2)':'transparent'};color:${isBold?'#fff':'var(--muted2)'};cursor:pointer;font-size:11px;font-weight:700;flex-shrink:0">B</button>
+    <button onclick="updSegItalic(${i})" style="padding:3px 8px;border-radius:3px;border:1px solid ${seg.italic?'var(--accent2)':'var(--border2)'};background:${seg.italic?'var(--accent2)':'transparent'};color:${seg.italic?'#fff':'var(--muted2)'};cursor:pointer;font-size:11px;font-style:italic;flex-shrink:0">I</button>
+  </div>
+  <div style="display:flex;align-items:center;gap:5px">
+    <span style="font-size:9px;color:var(--muted);flex-shrink:0;width:42px">Opacity</span>
+    <input type="range" min="0" max="100" step="1" value="${segOp}" style="flex:1;accent-color:var(--accent);height:3px;cursor:pointer" oninput="updSegOpacity(${i},this.value);this.nextElementSibling.textContent=this.value+'%'">
+    <span style="font-size:10px;color:var(--cyan);font-family:monospace;width:32px;text-align:right;flex-shrink:0">${segOp}%</span>
+    <button onclick="dupSeg(${i})" title="Duplicate segment" style="background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:3px;cursor:pointer;font-size:10px;padding:2px 5px;flex-shrink:0">⊕</button>
+    <button onclick="moveSegUp(${i})" title="Move up" style="background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:11px;padding:0 1px;flex-shrink:0">↑</button>
+    <button onclick="moveSegDown(${i})" title="Move down" style="background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:11px;padding:0 1px;flex-shrink:0">↓</button>
+  </div>
+</div>`;}).join(''):`<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:10px 0">No segments yet — click Add Segment.</div>`;
+  const multiColorContent=`${tog('Enable Multi-Color Text','Each segment: color, size, weight, align, opacity & line break','multiColor',box?.multiColor??false)}<div class="${box?.multiColor?'':'dim'}">${mcPreviewHtml}<div id="mcSegRows">${mcRows}</div><div style="display:flex;gap:5px;margin-top:5px"><button class="btn sm primary" style="flex:1;justify-content:center" onclick="addSeg()">+ Segment</button><button class="btn sm" style="flex:1;justify-content:center;border-color:var(--accent)44;color:var(--accent)" onclick="addSegNewLine()">↵ New Line</button></div><div style="display:flex;gap:5px;margin-top:4px"><button class="btn sm" style="flex:1;justify-content:center" onclick="exportSegments('${box?.id}')">⬇ Export</button><label class="btn sm" style="flex:1;justify-content:center;cursor:pointer">⬆ Import<input type="file" accept=".csv,.json" style="display:none" onchange="importSegments(event,'${box?.id}')"></label></div></div>`;
+
+  pb.innerHTML=acc('key','var(--green)','① Key',overflowLangs.length?'warn':null,keyContent)+acc('dims','var(--cyan)','② Dimensions',null,dimsContent)+acc('font','var(--accent2)','③ Font',null,fontContent)+acc('textstyle','var(--accent)','④ Text Style',null,tsContent)+acc('gradient','var(--yellow)','⑤ Gradient Text',box?.gradient?'on':'off',gradientContent)+acc('multicolor','#FF9B5E','⑥ Multi-Color',box?.multiColor?'on':'off',multiColorContent)+acc('layout','var(--orange)','⑦ Layout & Fit',null,layoutContent)+acc('shadow','#FF9B5E','⑧ Shadow',box?.shadow?'on':'off',shadowContent)+acc('stroke','#FF576B','⑨ Stroke',box?.stroke?'on':'off',strokeContent)+acc('bgbox','#A78BFA','⑩ Background',box?.bg?'on':'off',bgContent)+acc('rtl','var(--yellow)','⑪ RTL & Lang Fonts',null,rtlContent)+acc('presets','var(--green)','⑫ Presets',null,presetsContent)+`<div style="padding:9px 11px 11px;display:flex;gap:5px"><button class="btn sm${isLocked?' primary':''}" style="flex:1;justify-content:center" onclick="toggleLock('${box?.id}')">${isLocked?'🔓 Unlock':'🔒 Lock'}</button><button class="btn danger sm" style="flex:1;justify-content:center" onclick="snapshot();rmBox('${box?.id}')">🗑 Delete</button></div>`;
+  if(box?.shadow)OPEN_SECS.shadow=true;if(box?.stroke)OPEN_SECS.stroke=true;if(box?.bg)OPEN_SECS.bgbox=true;if(overflowLangs.length)OPEN_SECS.key=true;if(box?.gradient)OPEN_SECS.gradient=true;if(box?.multiColor)OPEN_SECS.multicolor=true;
 }
 function togAcc(id){OPEN_SECS[id]=!OPEN_SECS[id];renderProps();}
 function toggleLock(id){if(!id)return;ST.locked[id]=!ST.locked[id];renderCanvas();renderProps();}
@@ -957,16 +1033,28 @@ function updBox(k,v){const boxes=getCurBoxes();const ids=ST.multiSel.length>1?ST
 function invalidateCache(){ST.screenshots.forEach((_,i)=>{(ST.csv?.langs||[]).forEach(l=>{delete ST.cache[`${i}_${l}`];});});}
 
 // ════ RENDERER ════
+function getFontWeight(box){const w=(box.fontWeight||'bold').toLowerCase();if(w==='medium'||w==='400')return'400';if(w==='semibold'||w==='600')return'600';if(w==='extrabold'||w==='800')return'800';return'700';/* bold default */}
+function parseSegments(str){if(!str||!str.trim())return[];const lines=str.includes('\n')?str.split('\n'):str.split(';;');const segs=[];for(const line of lines){const trimmed=line.trim();if(!trimmed)continue;const parts=trimmed.split('|');if(parts.length>=2){// field[4]: offset 0-100 (or legacy align string → convert)
+const raw4=parts[4]??'';let off=50;if(raw4==='left'||raw4==='0')off=0;else if(raw4==='right'||raw4==='100')off=100;else if(raw4==='center'||raw4==='')off=50;else{const n=parseFloat(raw4);off=isNaN(n)?50:Math.min(100,Math.max(0,n));}segs.push({text:parts[0]||'',color:parts[1]||'#ffffff',size:parseFloat(parts[2])||null,newline:parts[3]==='1',offset:off,weight:parts[5]||'',opacity:parts[6]!==undefined&&parts[6]!==''?parseFloat(parts[6]):100,italic:parts[7]==='1'});}}return segs;}
+function buildGradient(ctx,box,bx,by,bw,bh,scale){const colors=box.gradientColors||['#6C8EFF','#A78BFA'];const stops=box.gradientStops||colors.map((_,i)=>Math.round(i/(colors.length-1)*100));const dir=box.gradientDir||'horizontal';let grad;if(dir==='radial'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.max(bw,bh)/2);}else if(dir==='center'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.min(bw,bh)/2);}else if(dir==='vertical'){grad=ctx.createLinearGradient(bx,by,bx,by+bh);}else if(dir==='diagonal'){grad=ctx.createLinearGradient(bx,by,bx+bw,by+bh);}else if(dir==='diag2'){grad=ctx.createLinearGradient(bx+bw,by,bx,by+bh);}else{grad=ctx.createLinearGradient(bx,by,bx+bw,by);}colors.forEach((c,i)=>{try{grad.addColorStop(Math.min(1,Math.max(0,(stops[i]??Math.round(i/(colors.length-1)*100))/100)),c);}catch(e){}});return grad;}
 function drawTextOnCanvas(ctx,box,text,bx,by,bw,bh,pad,scale){
   scale=scale||1;const innerW=bw-pad*2;const innerH=bh-pad*2;
-  const weight=box.bold?'700':'400';const fStyle=box.italic?'italic':'normal';const fam=box.fontFamily||'sans-serif';const rtl=box.rtl||false;
+  const weight=getFontWeight(box);const fStyle=box.italic?'italic':'normal';const fam=box.fontFamily||'sans-serif';const rtl=box.rtl||false;
   let fs=(box.fontSize||44)*scale;
   ctx.save();if(box.rotation){const cx=bx+bw/2,cy=by+bh/2;ctx.translate(cx,cy);ctx.rotate((box.rotation||0)*Math.PI/180);ctx.translate(-cx,-cy);}
   ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();ctx.direction=rtl?'rtl':'ltr';ctx.textBaseline='alphabetic';ctx.textAlign=box.align||'center';
-  const col=hexToRgba(box.color||'#ffffff',(box.colorOpacity??100)/100);const doWrap=box.wordWrap??true;
+
+  // Multi-color mode
+  if(box.multiColor&&box.multiSegments){
+    const segs=parseSegments(box.multiSegments);
+    if(segs.length>0){drawMultiColorText(ctx,box,segs,text,bx,by,bw,bh,pad,scale,weight,fStyle,fam);ctx.restore();ctx.direction='ltr';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;return;}
+  }
+
+  const col=box.gradient?buildGradient(ctx,box,bx,by,bw,bh,scale):hexToRgba(box.color||'#ffffff',(box.colorOpacity??100)/100);
+  const doWrap=box.wordWrap??true;
   function wT(size){ctx.font=`${fStyle} ${weight} ${size}px "${fam}"`;if(!doWrap)return[text];const words=text.split(/\s+/);const lines=[];let cur='';for(const w of words){const t=cur?cur+' '+w:w;if(ctx.measureText(t).width<=innerW-2){cur=t;}else{if(cur)lines.push(cur);cur=w;}}if(cur)lines.push(cur);return lines.filter(Boolean);}
   let lines=wT(fs);
-  if(box.autoFit!==false){const lhM=box.lineSpacing??1.0;let iters=0;if(doWrap){while(fs>6*scale&&iters++<100){if(lines.length*fs*lhM<=innerH&&!lines.some(l=>{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;return ctx.measureText(l).width>innerW;}))break;fs=Math.max(6*scale,fs-1*scale);lines=wT(fs);}}else{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;while(fs>6*scale&&ctx.measureText(lines[0]).width>innerW&&iters++<200){fs=Math.max(6*scale,fs-1*scale);ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;;}}}
+  if(box.autoFit!==false){const lhM=box.lineSpacing??1.0;let iters=0;if(doWrap){while(fs>6*scale&&iters++<100){if(lines.length*fs*lhM<=innerH&&!lines.some(l=>{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;return ctx.measureText(l).width>innerW;}))break;fs=Math.max(6*scale,fs-1*scale);lines=wT(fs);}}else{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;while(fs>6*scale&&ctx.measureText(lines[0]).width>innerW&&iters++<200){fs=Math.max(6*scale,fs-1*scale);ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;}}}
   if(doWrap&&box.maxLines&&box.maxLines>0)lines=lines.slice(0,box.maxLines);
   ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;const lh=fs*(box.lineSpacing??1.0);const totalH=lines.length*lh;
   if(box.bg){const bgP=(box.bgPadding??8)*scale;let bgY=by+pad;if(box.valign==='middle')bgY=by+pad+(innerH-totalH)/2-bgP;else if(box.valign==='bottom')bgY=by+bh-pad-totalH-bgP;else bgY=by+pad-bgP;ctx.fillStyle=hexToRgba(box.bgColor||'#000000',(box.bgOpacity??50)/100);rRect(ctx,bx+pad-bgP,bgY,innerW+bgP*2,totalH+bgP*2,(box.bgRadius??6)*scale);ctx.fill();}
@@ -976,9 +1064,198 @@ function drawTextOnCanvas(ctx,box,text,bx,by,bw,bh,pad,scale){
   for(const line of lines){if(box.stroke){ctx.strokeStyle=box.strokeColor||'#000000';ctx.lineWidth=(box.strokeWidth??2)*scale;ctx.lineJoin='round';if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,true);else ctx.strokeText(line,txX,ty);}ctx.fillStyle=col;ctx.shadowBlur=box.shadow?(box.shadowBlur??8)*scale:0;ctx.shadowOffsetX=box.shadow?(box.shadowOffsetX??3)*scale:0;ctx.shadowOffsetY=box.shadow?(box.shadowOffsetY??3)*scale:0;if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,false);else ctx.fillText(line,txX,ty);ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;ty+=lh;}
   ctx.restore();ctx.direction='ltr';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
 }
+function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fStyle,fam){
+  const innerW=bw-pad*2;const innerH=bh-pad*2;
+  const ls=(box.letterSpacing||0)*scale;
+  const lsM=box.lineSpacing??1.2;
+  const fwMap={medium:'400',semibold:'600',bold:'700',extrabold:'800'};
+
+  // ── Step 1: Group segments into logical lines (respecting newline flag) ──
+  const logicalLines=[];let cur=[];
+  for(let i=0;i<segs.length;i++){
+    const seg=segs[i];
+    if(seg.newline&&cur.length>0){logicalLines.push(cur);cur=[];}
+    cur.push(seg);
+  }
+  if(cur.length)logicalLines.push(cur);
+
+  // ── Step 2: For each logical line, measure and optionally word-wrap ──
+  const doWrap=box.wordWrap??true;
+  // Each renderLine carries lineOffset (0–100)
+  const renderLines=[];
+  for(const logLine of logicalLines){
+    // line-level offset: first segment's offset wins, default 50 (center)
+    const lineOffset=logLine[0]?.offset??50;
+    const measured=logLine.map(seg=>{
+      const sz=(seg.size||box.fontSize||44)*scale;
+      const segFw=fwMap[seg.weight||'']||weight;
+      const segFStyle=(seg.italic?'italic':'normal');
+      ctx.font=`${segFStyle} ${segFw} ${sz}px "${fam}"`;
+      const w=ctx.measureText(seg.text).width;
+      const op=(seg.opacity!==undefined?seg.opacity:100)/100;
+      return{text:seg.text,color:seg.color||'#ffffff',sz,w,segFw,segFStyle,op};
+    });
+    const totalW=measured.reduce((a,s)=>a+s.w,0);
+    if(!doWrap||totalW<=innerW){
+      const lineH=Math.max(...measured.map(s=>s.sz))*lsM;
+      renderLines.push({segments:measured,lineH,lineOffset});
+    } else {
+      let curRLine=[];let curW=0;
+      for(const seg of measured){
+        const words=seg.text.split(/\s+/).filter(Boolean);
+        for(let wi=0;wi<words.length;wi++){
+          const word=words[wi]+(wi<words.length-1?' ':'');
+          ctx.font=`${seg.segFStyle} ${seg.segFw} ${seg.sz}px "${fam}"`;
+          const ww=ctx.measureText(word).width;
+          if(curRLine.length&&curW+ww>innerW){
+            const lh=Math.max(...curRLine.map(s=>s.sz))*lsM;
+            renderLines.push({segments:curRLine,lineH:lh,lineOffset});
+            curRLine=[];curW=0;
+          }
+          curRLine.push({...seg,text:word,w:ww});
+          curW+=ww;
+        }
+      }
+      if(curRLine.length){
+        const lh=Math.max(...curRLine.map(s=>s.sz))*lsM;
+        renderLines.push({segments:curRLine,lineH:lh,lineOffset});
+      }
+    }
+  }
+
+  // ── Step 3: Total height & vertical position ──
+  const totalH=renderLines.reduce((a,l)=>a+l.lineH,0);
+  let ty=by+pad;
+  if(box.valign==='middle')ty=by+pad+(innerH-totalH)/2;
+  else if(box.valign==='bottom')ty=by+bh-pad-totalH;
+
+  // ── Step 4: Background box ──
+  if(box.bg){
+    const bgP=(box.bgPadding??8)*scale;
+    ctx.fillStyle=hexToRgba(box.bgColor||'#000000',(box.bgOpacity??50)/100);
+    rRect(ctx,bx+pad-bgP,ty-bgP,innerW+bgP*2,totalH+bgP*2,(box.bgRadius??6)*scale);
+    ctx.fill();
+  }
+
+  // ── Step 5: Shadow ──
+  if(box.shadow){
+    ctx.shadowColor=hexToRgba(box.shadowColor||'#000000',(box.shadowOpacity??65)/100);
+    ctx.shadowBlur=(box.shadowBlur??8)*scale;
+    ctx.shadowOffsetX=(box.shadowOffsetX??3)*scale;
+    ctx.shadowOffsetY=(box.shadowOffsetY??3)*scale;
+  }
+
+  // ── Step 6: Draw each render line ──
+  for(const rline of renderLines){
+    let lineW=0;
+    for(const s of rline.segments){ctx.font=`${s.segFStyle} ${s.segFw} ${s.sz}px "${fam}"`;lineW+=ctx.measureText(s.text).width+ls;}
+    lineW=Math.max(0,lineW-ls);
+    // offset 0=left edge, 50=center, 100=right edge — clamp so overflow text stays at left edge
+    const off=(rline.lineOffset??50)/100;
+    const availableSlide=Math.max(0,innerW-lineW);
+    let tx=bx+pad+availableSlide*off;
+    const baseline=ty+rline.lineH*0.78;
+    for(const seg of rline.segments){
+      ctx.font=`${seg.segFStyle} ${seg.segFw} ${seg.sz}px "${fam}"`;
+      ctx.globalAlpha=seg.op;
+      if(box.stroke){
+        ctx.strokeStyle=box.strokeColor||'#000000';
+        ctx.lineWidth=(box.strokeWidth??2)*scale;
+        ctx.lineJoin='round';
+        ctx.strokeText(seg.text,tx,baseline);
+      }
+      ctx.fillStyle=seg.color;
+      ctx.fillText(seg.text,tx,baseline);
+      ctx.globalAlpha=1;
+      tx+=ctx.measureText(seg.text).width+ls;
+    }
+    ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
+    ty+=rline.lineH;
+  }
+}
 function drawSpaced(ctx,line,tx,ty,ls,stroke){let lw=0;for(const ch of line)lw+=ctx.measureText(ch).width+ls;let lx=tx;if(ctx.textAlign==='center')lx=tx-lw/2;else if(ctx.textAlign==='right')lx=tx-lw;for(const ch of line){if(stroke)ctx.strokeText(ch,lx,ty);else ctx.fillText(ch,lx,ty);lx+=ctx.measureText(ch).width+ls;}}
 function rRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2,10);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
 function hexToRgba(hex,alpha){let h=(hex||'#000000').replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];const r=parseInt(h.slice(0,2),16)||0,g=parseInt(h.slice(2,4),16)||0,b=parseInt(h.slice(4,6),16)||0;return`rgba(${r},${g},${b},${clamp(alpha??1,0,1)})`;}
+
+// ════ GRADIENT STOP HELPERS ════
+function _refreshGradPreviewBar(){
+  const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box)return;
+  const bar=document.getElementById('gradPreviewBar');if(!bar)return;
+  const colors=box.gradientColors||['#6C8EFF','#A78BFA'];
+  const stops=box.gradientStops||colors.map((_,i)=>Math.round(i/(colors.length-1)*100));
+  const dir=box.gradientDir||'horizontal';
+  const cssDir=dir==='vertical'?'to bottom':dir==='diagonal'?'135deg':dir==='diag2'?'225deg':(dir==='radial'||dir==='center')?'circle':'to right';
+  const stopsStr=colors.map((c,i)=>`${c} ${stops[i]??Math.round(i/(colors.length-1)*100)}%`).join(',');
+  bar.style.background=(dir==='radial'||dir==='center')?`radial-gradient(${cssDir}, ${stopsStr})`:`linear-gradient(${cssDir}, ${stopsStr})`;
+}
+function _refreshMcPreview(){
+  // Rebuild only the preview bar above segment rows, without full renderProps
+  const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box)return;
+  const bar=document.getElementById('mcPreviewBar');if(!bar)return;
+  const segs=parseSegments(box.multiSegments||'');
+  const fwMap={medium:'400',semibold:'600',bold:'700',extrabold:'800'};
+  const lineGroups=[];let curGrp=[];
+  segs.forEach(s=>{if(s.newline&&curGrp.length){lineGroups.push(curGrp);curGrp=[];}curGrp.push(s);});
+  if(curGrp.length)lineGroups.push(curGrp);
+  bar.innerHTML=lineGroups.map(grp=>{
+    const off=grp[0]?.offset??50;
+    const ml=off+'%';
+    const spans=grp.map(s=>{
+      const fw=fwMap[s.weight||box.fontWeight||'medium']||'400';
+      const op=(s.opacity!==undefined?s.opacity:100)/100;
+      return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fw};opacity:${op};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
+    }).join('<span style="font-size:3px"> </span>');
+    return`<div style="display:flex;white-space:nowrap;padding:1px 0;transform:translateX(${ml});transition:transform .1s">${spans}</div>`;
+  }).join('');
+}
+function updGradColor(i,val){
+  const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box)return;
+  if(!box.gradientColors)box.gradientColors=['#6C8EFF','#A78BFA'];
+  box.gradientColors[i]=val;
+  const swatches=document.querySelectorAll('#gradStopsUI .grad-swatch');
+  if(swatches[i])swatches[i].style.background=val;
+  setCurBoxes(getCurBoxes());invalidateCache();_refreshGradPreviewBar();drawPrevOverlay();
+}
+function updGradStop(i,val){
+  const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box)return;
+  if(!box.gradientStops)box.gradientStops=[0,100];
+  box.gradientStops[i]=val;
+  setCurBoxes(getCurBoxes());invalidateCache();_refreshGradPreviewBar();drawPrevOverlay();
+}
+function addGradStop(){const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box)return;if(!box.gradientColors)box.gradientColors=['#6C8EFF','#A78BFA'];if(!box.gradientStops)box.gradientStops=[0,100];const n=box.gradientColors.length;const lastStop=box.gradientStops[n-1]||100;const newStop=Math.min(100,Math.round((lastStop+100)/2));box.gradientColors.push('#ffffff');box.gradientStops.push(newStop);setCurBoxes(getCurBoxes());invalidateCache();renderProps();}
+function rmGradStop(i){const box=getCurBoxes().find(b=>b.id===ST.selId);if(!box||!box.gradientColors||(box.gradientColors.length<=2))return;box.gradientColors.splice(i,1);if(box.gradientStops)box.gradientStops.splice(i,1);setCurBoxes(getCurBoxes());invalidateCache();renderProps();}
+
+// ════ SEGMENT ROW HELPERS ════
+function _getBox(){return getCurBoxes().find(b=>b.id===ST.selId);}
+function _saveSegs(segs){const box=_getBox();if(!box)return;box.multiSegments=segs.map(_serSeg).join('\n');setCurBoxes(getCurBoxes());invalidateCache();renderProps();drawPrevOverlay();}
+function addSeg(){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');segs.push({text:'Text',color:'#ffffff',size:box.fontSize||44,newline:false,offset:50,weight:'',opacity:100,italic:false});_saveSegs(segs);}
+function addSegNewLine(){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');segs.push({text:'Text',color:'#ffffff',size:box.fontSize||44,newline:true,offset:50,weight:'',opacity:100,italic:false});_saveSegs(segs);}
+function rmSeg(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');segs.splice(i,1);_saveSegs(segs);}
+function _serSeg(s){return`${s.text}|${s.color||'#ffffff'}|${s.size||44}|${s.newline?'1':'0'}|${s.offset!==undefined?s.offset:50}|${s.weight||''}|${s.opacity!==undefined?s.opacity:100}|${s.italic?'1':'0'}`;}
+function _patchSeg(i,patch){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(!segs[i])return;Object.assign(segs[i],patch);box.multiSegments=segs.map(_serSeg).join('\n');setCurBoxes(getCurBoxes());invalidateCache();}
+function updSegText(i,v){_patchSeg(i,{text:v});drawPrevOverlay();}
+function updSegColor(i,v){_patchSeg(i,{color:v});const swatches=document.querySelectorAll('#mcSegRows .mc-swatch');if(swatches[i])swatches[i].style.background=v;drawPrevOverlay();}
+function updSegSize(i,v){_patchSeg(i,{size:parseFloat(v)||44});drawPrevOverlay();}
+function updSegOpacity(i,v){_patchSeg(i,{opacity:parseFloat(v)||100});drawPrevOverlay();}
+function updSegOffset(i,v){_patchSeg(i,{offset:parseFloat(v)});// update preview label in-place without full re-render
+const label=document.querySelector(`#mcSegRows [data-segoff="${i}"]`);if(label)label.textContent=Math.round(v)+'%';drawPrevOverlay();_refreshMcPreview();}
+function updSegWeight(i,v){_patchSeg(i,{weight:v});renderProps();drawPrevOverlay();}
+function toggleSegBold(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(segs[i])segs[i].weight=segs[i].weight==='bold'?'':'bold';_saveSegs(segs);}
+function updSegItalic(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(segs[i])segs[i].italic=!segs[i].italic;_saveSegs(segs);}
+function toggleSegNewline(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(segs[i])segs[i].newline=!segs[i].newline;_saveSegs(segs);}
+function dupSeg(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(!segs[i])return;const copy={...segs[i],newline:false};segs.splice(i+1,0,copy);_saveSegs(segs);}
+function moveSegUp(i){if(i===0)return;const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');[segs[i-1],segs[i]]=[segs[i],segs[i-1]];_saveSegs(segs);}
+function moveSegDown(i){const box=_getBox();if(!box)return;const segs=parseSegments(box.multiSegments||'');if(i>=segs.length-1)return;[segs[i],segs[i+1]]=[segs[i+1],segs[i]];_saveSegs(segs);}
+
+// ════ SEGMENT IMPORT / EXPORT ════
+function exportSegments(boxId){const box=getCurBoxes().find(b=>b.id===boxId);if(!box)return;const segs=parseSegments(box.multiSegments||'');if(!segs.length){toast('No segments to export','err');return;}const json=JSON.stringify(segs,null,2);const blob=new Blob([json],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='segments.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast('Segments exported','ok');}
+async function importSegments(e,boxId){const file=e.target.files[0];if(!file)return;e.target.value='';const text=await file.text();let str='';try{if(file.name.endsWith('.json')){const arr=JSON.parse(text);str=arr.map(s=>`${s.text}|${s.color||'#ffffff'}|${s.size||44}`).join('\n');}else{// CSV: text,color,size
+const lines=text.split('\n').filter(Boolean);str=lines.map(l=>{const p=l.split(',');return`${p[0]||''}|${p[1]||'#ffffff'}|${p[2]||44}`;}).join('\n');}}catch(err){toast('Invalid file','err');return;}const box=getCurBoxes().find(b=>b.id===boxId);if(!box)return;box.multiSegments=str;setCurBoxes(getCurBoxes());invalidateCache();renderProps();toast('Segments imported','ok');}
+
+// ════ PRESET EXPORT / IMPORT ════
+function exportPresets(){if(!ST.presets.length){toast('No presets to export','err');return;}const blob=new Blob([JSON.stringify(ST.presets,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='screenloc_presets.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);toast(`${ST.presets.length} presets exported`,'ok');}
+async function importPresets(e){const file=e.target.files[0];if(!file)return;e.target.value='';const text=await file.text();try{let imported=[];if(file.name.endsWith('.json')){imported=JSON.parse(text);}else{// CSV import: name,fontFamily,fontSize,color,...
+const lines=text.split('\n').filter(Boolean);const hdr=lines[0].split(',').map(h=>h.trim());for(let i=1;i<lines.length;i++){const vals=lines[i].split(',').map(v=>v.trim());const obj={name:'Imported Preset'};hdr.forEach((h,j)=>{let v=vals[j]||'';if(v==='true')v=true;else if(v==='false')v=false;else if(!isNaN(v)&&v!=='')v=Number(v);obj[h]=v;});imported.push(obj);}}if(!Array.isArray(imported)||!imported.length)throw new Error('Empty');const merged=[...ST.presets,...imported.filter(p=>p.name&&!ST.presets.find(x=>x.name===p.name))];ST.presets=merged;renderProps();toast(`${imported.length} preset(s) imported`,'ok');}catch(err){toast('Invalid preset file','err');}}
 
 // ════ STEP 3 ════
 function renderPrevSidebar(){const warns=checkOverflow();document.getElementById('prevScrList').innerHTML=ST.screenshots.map((s,i)=>`<button class="scr-btn${i===ST.prevScrIdx?' active':''}" onclick="setPrevScr(${i})">📱 ${s.name}</button>`).join('');document.getElementById('prevLangGrid').innerHTML=(ST.csv?.langs||[]).map(l=>{const hasWarn=ST.screenshots.some(s=>{const sw=warns[s.id]||{};return Object.values(sw).some(langs=>langs.includes(l));});return`<div class="lang-btn${l===ST.prevLang?' active':''}${hasWarn?' has-warn':''}" onclick="setPrevLang('${l}')">${l}</div>`;}).join('');}
