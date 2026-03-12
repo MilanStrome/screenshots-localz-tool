@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>ScreenLoc Pro v3</title>
+<title>ScreensLocalz Pro v1</title>
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -531,7 +531,7 @@ const ST={
 };
 let undoStack=[],redoStack=[];
 const MAX_UNDO=40;
-const DEF=()=>({key:'',fontFamily:'sans-serif',fontSize:44,color:'#ffffff',colorOpacity:100,align:'center',valign:'middle',bold:false,italic:false,fontWeight:'medium',lineSpacing:1.0,letterSpacing:0,rotation:0,wordWrap:true,autoFit:true,maxLines:0,padding:6,shadow:false,shadowColor:'#000000',shadowOpacity:65,shadowBlur:8,shadowOffsetX:3,shadowOffsetY:3,stroke:false,strokeColor:'#000000',strokeWidth:2,bg:false,bgColor:'#000000',bgOpacity:50,bgPadding:8,bgRadius:6,rtl:false,gradient:false,gradientColors:['#6C8EFF','#A78BFA'],gradientDir:'horizontal',gradientStops:[0,100],multiColor:false,multiSegments:'Secure|#FFFFFF|44|0|50||100|0\nAny App|#FFD400|32|1|50||100|0'});
+const DEF=()=>({key:'',fontFamily:'sans-serif',fontSize:44,color:'#ffffff',colorOpacity:100,alignX:50,valignY:50,bold:false,italic:false,italicDeg:0,fontWeight:'medium',fontWeightNum:400,lineSpacing:1.0,letterSpacing:0,rotation:0,wordWrap:true,autoFit:true,maxLines:0,padding:6,shadow:false,shadowColor:'#000000',shadowOpacity:65,shadowBlur:8,shadowOffsetX:3,shadowOffsetY:3,stroke:false,strokeColor:'#000000',strokeWidth:2,bg:false,bgColor:'#000000',bgOpacity:50,bgPadding:8,bgRadius:6,rtl:false,gradient:false,gradientColors:['#6C8EFF','#A78BFA'],gradientDir:'horizontal',gradientStops:[0,100],multiColor:false,multiSegments:'Secure|#FFFFFF|44|0|50||100|0\nAny App|#FFD400|32|1|50||100|0'});
 const MIN_FS=10;
 const OPEN_SECS={key:true,dims:false,font:true,textstyle:true,layout:true,shadow:false,stroke:false,bgbox:false,rtl:false,gradient:false,multicolor:false,presets:false};
 let drawing=false,drawStart=null,dragging=false,dragBox=null,dragOff=null,resizing=false,resizeBox=null,resizeStart=null;
@@ -942,8 +942,15 @@ function renderProps(){
   const keyContent=`<div class="field"><div class="field-label">CSV Key</div><select class="finput" style="border-color:var(--accent)" onchange="updBox('key',this.value);renderProps();drawPrevOverlay()"><option value="">— Select key —</option>${keyOpts}</select></div>${overflowLangs.length?`<div style="background:#ff576b12;border:1px solid var(--red)33;border-radius:var(--rs);padding:7px 9px;font-size:10.5px;color:var(--red)">⚠ Too small in: ${overflowLangs.join(', ')}</div>`:''}${row?`<div class="key-preview">${['en',...(ST.csv?.langs||[])].filter(l=>row[l]).slice(0,6).map(l=>`<div class="kp-row"><span class="kp-lang${overflowLangs.includes(l)?' warn-lang':''}">${l}</span><span class="kp-val${l==='en'?' en':''}">${(row[l]||'').slice(0,44)}…</span></div>`).join('')}</div>`:`<div style="font-size:10px;color:var(--muted)">Select a key to preview</div>`}`;
   const dimsContent=`<div class="dim-badge"><div class="field" style="flex:1"><div class="field-label">W</div><div class="dim-val">${bwPx}px</div></div><div style="font-size:10px;color:var(--muted);margin-top:14px">×</div><div class="field" style="flex:1"><div class="field-label">H</div><div class="dim-val">${bhPx}px</div></div></div>`;
   const fw=box?.fontWeight||'bold';
-  const fontContent=`<div class="field"><div class="field-label">Font Family</div><select class="finput" onchange="updBox('fontFamily',this.value);renderProps();drawPrevOverlay()">${fontOpts}</select></div>${fontPreviewHtml}${sl('Size (px)','fontSize',6,300,1,box?.fontSize??44,'px')}<div class="field"><div class="field-label">Weight</div><div class="btn-group" style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr"><div class="bg-btn${fw==='medium'?' on':''}" onclick="updBox('fontWeight','medium');renderProps();drawPrevOverlay()" title="Medium 400" style="font-weight:400;font-size:10.5px">M</div><div class="bg-btn${fw==='semibold'?' on':''}" onclick="updBox('fontWeight','semibold');renderProps();drawPrevOverlay()" title="Semi Bold 600" style="font-weight:600;font-size:10.5px">SB</div><div class="bg-btn${fw==='bold'?' on':''}" onclick="updBox('fontWeight','bold');renderProps();drawPrevOverlay()" title="Bold 700" style="font-weight:700;font-size:10.5px">B</div><div class="bg-btn${fw==='extrabold'?' on':''}" onclick="updBox('fontWeight','extrabold');renderProps();drawPrevOverlay()" title="Extra Bold 800" style="font-weight:800;font-size:10.5px">XB</div></div></div><div class="field"><div class="field-label">Style</div><div class="btn-group"><div class="bg-btn${box?.italic?' on':''}" onclick="updBox('italic',${!box?.italic});renderProps();drawPrevOverlay()"><i>I</i></div></div></div>`;
-  const tsContent=`${cc('Color','color',box?.color||'#ffffff')}${sl('Opacity','colorOpacity',0,100,1,box?.colorOpacity??100,'%','var(--cyan)')}<div class="field"><div class="field-label">H-Align</div>${bgr('align',[['left','⬅ L'],['center','C'],['right','R ➡']],box?.align)}</div><div class="field"><div class="field-label">V-Align</div>${bgr('valign',[['top','⬆ Top'],['middle','Mid'],['bottom','Bot ⬇']],box?.valign)}</div>${sl('Line Spacing','lineSpacing',0.6,3,0.05,box?.lineSpacing??1.0,'×','var(--accent2)')}${sl('Letter Spacing','letterSpacing',-8,40,1,box?.letterSpacing||0,'px')}${sl('Rotation','rotation',-180,180,1,box?.rotation||0,'°','var(--orange)')}${sl('Padding','padding',0,60,1,box?.padding??6,'px')}`;
+  const fwNum=box?.fontWeightNum??( fw==='medium'?400:fw==='semibold'?600:fw==='extrabold'?800:700 );
+  const italicDeg=box?.italicDeg??0;
+  const italicPreview=italicDeg===0?'normal':italicDeg>=14?'italic':`oblique ${italicDeg}deg`;
+  const fontContent=`<div class="field"><div class="field-label">Font Family</div><select class="finput" onchange="updBox('fontFamily',this.value);renderProps();drawPrevOverlay()">${fontOpts}</select></div>${fontPreviewHtml}<div class="field-row">${sl('Size (px)','fontSize',6,300,1,box?.fontSize??44,'px')}</div><div class="field"><div class="field-label" style="display:flex;justify-content:space-between">Weight <span id="fwLbl" style="color:var(--accent2);font-family:monospace;font-size:9px;font-weight:${fwNum}">${fwNum}</span></div><div class="slider-combo"><input type="range" min="100" max="900" step="100" value="${fwNum}" style="flex:1;accent-color:var(--accent2);cursor:pointer;height:4px" oninput="updBox('fontWeightNum',parseInt(this.value));document.getElementById('sl_fwNum').value=this.value;document.getElementById('fwLbl').textContent=this.value;document.getElementById('fwLbl').style.fontWeight=this.value;drawPrevOverlay()"><input class="slider-num" id="sl_fwNum" type="number" min="100" max="900" step="100" value="${fwNum}" style="color:var(--accent2)" oninput="updBox('fontWeightNum',parseInt(this.value));this.previousElementSibling.value=this.value;document.getElementById('fwLbl').textContent=this.value;document.getElementById('fwLbl').style.fontWeight=this.value;drawPrevOverlay()"></div><div style="display:flex;justify-content:space-between;padding:0 2px;margin-top:1px"><span style="font-size:8px;color:var(--muted)">Thin</span><span style="font-size:8px;color:var(--muted)">Regular</span><span style="font-size:8px;color:var(--muted)">Bold</span><span style="font-size:8px;color:var(--muted)">Black</span></div></div><div class="field"><div class="field-label" style="display:flex;justify-content:space-between">Italic / Oblique <span id="italicLbl" style="color:var(--orange);font-family:monospace;font-size:9px;font-style:${italicPreview}">${italicDeg===0?'Off':italicDeg+'°'}</span></div><div class="slider-combo"><input type="range" min="0" max="45" step="1" value="${italicDeg}" style="flex:1;accent-color:var(--orange);cursor:pointer;height:4px" oninput="updBox('italicDeg',parseInt(this.value));document.getElementById('sl_italicDeg').value=this.value;const lbl=document.getElementById('italicLbl');lbl.textContent=this.value==0?'Off':this.value+'°';lbl.style.fontStyle=this.value==0?'normal':this.value>=14?'italic':'oblique '+this.value+'deg';drawPrevOverlay()"><input class="slider-num" id="sl_italicDeg" type="number" min="0" max="45" step="1" value="${italicDeg}" style="color:var(--orange)" oninput="updBox('italicDeg',parseInt(this.value));this.previousElementSibling.value=this.value;const lbl=document.getElementById('italicLbl');lbl.textContent=this.value==0?'Off':this.value+'°';lbl.style.fontStyle=this.value==0?'normal':this.value>=14?'italic':'oblique '+this.value+'deg';drawPrevOverlay()"><span style="font-size:9.5px;color:var(--muted);flex-shrink:0">°</span></div><div style="display:flex;justify-content:space-between;padding:0 2px;margin-top:1px"><span style="font-size:8px;color:var(--muted)">Normal</span><span style="font-size:8px;color:var(--muted);font-style:italic">~Italic</span><span style="font-size:8px;color:var(--muted);font-style:oblique 45deg">Max ↗</span></div></div>`;
+  const hAlignX=box?.alignX??50;
+  const vAlignY=box?.valignY??50;
+  const hAlignSlider=`<div class="field"><div class="field-label" style="display:flex;justify-content:space-between">H-Position <span id="hAlignLbl" style="color:var(--accent);font-family:monospace;font-size:9px">${Math.round(hAlignX)}%</span></div><div class="slider-combo"><input type="range" min="0" max="100" step="1" value="${hAlignX}" style="flex:1;accent-color:var(--accent);cursor:pointer;height:4px" oninput="updBox('alignX',parseFloat(this.value));document.getElementById('sl_alignX').value=this.value;document.getElementById('hAlignLbl').textContent=Math.round(this.value)+'%';drawPrevOverlay()"><input class="slider-num" id="sl_alignX" type="number" min="0" max="100" step="1" value="${hAlignX}" style="color:var(--accent)" oninput="updBox('alignX',parseFloat(this.value));this.previousElementSibling.value=this.value;document.getElementById('hAlignLbl').textContent=Math.round(this.value)+'%';drawPrevOverlay()"><span style="font-size:9.5px;color:var(--muted);flex-shrink:0">%</span></div><div style="display:flex;justify-content:space-between;padding:0 2px;margin-top:1px"><span style="font-size:8px;color:var(--muted)">← Left</span><span style="font-size:8px;color:var(--muted)">Center</span><span style="font-size:8px;color:var(--muted)">Right →</span></div></div>`;
+  const vAlignSlider=`<div class="field"><div class="field-label" style="display:flex;justify-content:space-between">V-Position <span id="vAlignLbl" style="color:var(--accent2);font-family:monospace;font-size:9px">${Math.round(vAlignY)}%</span></div><div class="slider-combo"><input type="range" min="0" max="100" step="1" value="${vAlignY}" style="flex:1;accent-color:var(--accent2);cursor:pointer;height:4px" oninput="updBox('valignY',parseFloat(this.value));document.getElementById('sl_valignY').value=this.value;document.getElementById('vAlignLbl').textContent=Math.round(this.value)+'%';drawPrevOverlay()"><input class="slider-num" id="sl_valignY" type="number" min="0" max="100" step="1" value="${vAlignY}" style="color:var(--accent2)" oninput="updBox('valignY',parseFloat(this.value));this.previousElementSibling.value=this.value;document.getElementById('vAlignLbl').textContent=Math.round(this.value)+'%';drawPrevOverlay()"><span style="font-size:9.5px;color:var(--muted);flex-shrink:0">%</span></div><div style="display:flex;justify-content:space-between;padding:0 2px;margin-top:1px"><span style="font-size:8px;color:var(--muted)">↑ Top</span><span style="font-size:8px;color:var(--muted)">Middle</span><span style="font-size:8px;color:var(--muted)">Bottom ↓</span></div></div>`;
+  const tsContent=`${cc('Color','color',box?.color||'#ffffff')}${sl('Opacity','colorOpacity',0,100,1,box?.colorOpacity??100,'%','var(--cyan)')}${hAlignSlider}${vAlignSlider}${sl('Line Spacing','lineSpacing',0.6,3,0.05,box?.lineSpacing??1.0,'×','var(--accent2)')}${sl('Letter Spacing','letterSpacing',-8,40,1,box?.letterSpacing||0,'px')}${sl('Rotation','rotation',-180,180,1,box?.rotation||0,'°','var(--orange)')}${sl('Padding','padding',0,60,1,box?.padding??6,'px')}`;
   const layoutContent=`${tog('Word Wrap','Break long text into multiple lines','wordWrap',box?.wordWrap??true)}${tog('Auto-fit Font Size','Shrinks font to fit the box','autoFit',box?.autoFit??true)}<div class="${(box?.autoFit??true)?'dim':''}">${sl('Max Lines (0 = unlimited)','maxLines',0,20,1,box?.maxLines||0,'')}</div>`;
   const shadowContent=`${tog('Enable Shadow','','shadow',box?.shadow??false)}<div class="${box?.shadow?'':'dim'}">${cc('Color','shadowColor',box?.shadowColor||'#000000')}${sl('Opacity','shadowOpacity',0,100,1,box?.shadowOpacity??65,'%','var(--cyan)')}${sl('Blur','shadowBlur',0,80,1,box?.shadowBlur??8,'px')}<div class="field-row">${sl('Offset X','shadowOffsetX',-60,60,1,box?.shadowOffsetX??3,'px')}${sl('Offset Y','shadowOffsetY',-60,60,1,box?.shadowOffsetY??3,'px')}</div></div>`;
   const strokeContent=`${tog('Enable Stroke','','stroke',box?.stroke??false)}<div class="${box?.stroke?'':'dim'}">${cc('Color','strokeColor',box?.strokeColor||'#000000')}${sl('Width','strokeWidth',0.5,30,0.5,box?.strokeWidth??2,'px')}</div>`;
@@ -952,12 +959,22 @@ function renderProps(){
   const presetsContent=`<div style="display:flex;gap:5px;margin-bottom:6px"><button class="btn sm" style="flex:1;justify-content:center" onclick="showSavePresetModal()">💾 Save Style</button><button class="btn sm" style="flex:1;justify-content:center" onclick="exportPresets()">⬇ Export</button><label class="btn sm" style="flex:1;justify-content:center;cursor:pointer">⬆ Import<input type="file" accept=".json,.csv" style="display:none" onchange="importPresets(event)"></label></div>${ST.presets.length?`<div class="preset-grid">${ST.presets.map((p,i)=>`<div class="preset-item" onclick="applyPreset(${i})"><div class="preset-dot" style="background:${p.gradient?`linear-gradient(90deg,${(p.gradientColors||['#6C8EFF','#A78BFA']).join(',')})`:p.color}"></div><div class="preset-name">${p.name}</div><div class="preset-apply">Apply</div><div class="preset-del" onclick="event.stopPropagation();deletePreset(${i})">×</div></div>`).join('')}</div>`:`<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:6px">No presets saved yet.</div>`}`;
 
   const gdir=box?.gradientDir||'horizontal';
+  const gAngle=box?.gradientAngle??45;
   const gColors=box?.gradientColors||['#6C8EFF','#A78BFA'];
   const gStops=box?.gradientStops||gColors.map((_,i)=>Math.round(i/(gColors.length-1)*100));
-  const gCssDir=gdir==='vertical'?'to bottom':gdir==='diagonal'?'135deg':gdir==='diag2'?'225deg':(gdir==='radial'||gdir==='center')?'circle':'to right';
+  const isCustomAngle=gdir==='custom';
+  const isRadialType=(gdir==='radial'||gdir==='center'||gdir==='radial-tr'||gdir==='radial-tl');
+  const gCssDir=gdir==='vertical'?'to bottom':gdir==='horizontal'?'to right':gdir==='diagonal'?'135deg':gdir==='diag2'?'225deg':gdir==='diag3'?'45deg':gdir==='diag4'?'315deg':gdir==='custom'?gAngle+'deg':isRadialType?'circle':'to right';
   const gStopsStr=gColors.map((c,i)=>`${c} ${gStops[i]??Math.round(i/(gColors.length-1)*100)}%`).join(',');
-  const gBarBg=(gdir==='radial'||gdir==='center')?`radial-gradient(${gCssDir}, ${gStopsStr})`:`linear-gradient(${gCssDir}, ${gStopsStr})`;
-  const gradientContent=`${tog('Enable Gradient Text','Replaces solid color with gradient','gradient',box?.gradient??false)}<div class="${box?.gradient?'':'dim'}"><div id="gradPreviewBar" style="height:20px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);background:${gBarBg}"></div><div class="field"><div class="field-label">Direction</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:3px"><div class="bg-btn${gdir==='horizontal'?' on':''}" onclick="updBox('gradientDir','horizontal');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">→ H</div><div class="bg-btn${gdir==='vertical'?' on':''}" onclick="updBox('gradientDir','vertical');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↓ V</div><div class="bg-btn${gdir==='diagonal'?' on':''}" onclick="updBox('gradientDir','diagonal');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↘ D1</div><div class="bg-btn${gdir==='diag2'?' on':''}" onclick="updBox('gradientDir','diag2');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">↙ D2</div><div class="bg-btn${gdir==='radial'?' on':''}" onclick="updBox('gradientDir','radial');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">◎ Radial</div><div class="bg-btn${gdir==='center'?' on':''}" onclick="updBox('gradientDir','center');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">⊡ Center</div></div></div><div class="field"><div class="field-label">Color Stops</div><div id="gradStopsUI">${gColors.map((c,i)=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:5px"><label class="color-swatch grad-swatch" style="background:${c};width:26px;height:26px;flex-shrink:0;cursor:pointer"><input type="color" value="${c}" oninput="updGradColor(${i},this.value)"></label><input class="color-hex" type="text" value="${c}" placeholder="#rrggbb" style="flex:1;font-size:11px" oninput="updGradColor(${i},this.value.trim())"><span style="font-size:9px;color:var(--muted);flex-shrink:0">pos%</span><input class="slider-num" type="number" min="0" max="100" value="${gStops[i]??Math.round(i/(gColors.length-1)*100)}" style="width:44px;flex-shrink:0" oninput="updGradStop(${i},parseInt(this.value)||0)">${gColors.length>2?`<button onclick="rmGradStop(${i})" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;flex-shrink:0">×</button>`:''}</div>`).join('')}</div><button class="btn sm" style="width:100%;justify-content:center" onclick="addGradStop()">+ Add Color Stop</button></div></div>`;
+  const gRadialPos=gdir==='radial-tr'?'at top right':gdir==='radial-tl'?'at top left':gdir==='center'?'at center':'';
+  const gBarBg=isRadialType?`radial-gradient(circle ${gRadialPos}, ${gStopsStr})`:`linear-gradient(${gCssDir}, ${gStopsStr})`;
+  const gradDirBtns=[
+    ['horizontal','→ H'],['vertical','↓ V'],['diagonal','↘ D↘'],['diag2','↙ D↙'],
+    ['diag3','↗ D↗'],['diag4','↖ D↖'],['radial','◎ Radial'],['center','⊡ Center'],
+    ['radial-tr','◎ TR'],['radial-tl','◎ TL'],['custom','⚙ Custom °'],
+  ].map(([v,lbl])=>`<div class="bg-btn${gdir===v?' on':''}" onclick="updBox('gradientDir','${v}');renderProps();drawPrevOverlay()" style="border-radius:4px;padding:5px 2px;font-size:10px">${lbl}</div>`).join('');
+  const customAngleRow=isCustomAngle?`<div class="field" style="margin-top:4px"><div class="field-label" style="display:flex;justify-content:space-between">Angle <span style="color:var(--orange);font-family:monospace;font-size:9px">${gAngle}°</span></div><div class="slider-combo"><input type="range" min="0" max="360" step="1" value="${gAngle}" oninput="updBox('gradientAngle',parseInt(this.value));document.getElementById('sl_gradientAngle').value=this.value;renderProps();drawPrevOverlay()"><input class="slider-num" id="sl_gradientAngle" type="number" min="0" max="360" step="1" value="${gAngle}" style="color:var(--orange)" oninput="updBox('gradientAngle',parseInt(this.value)||0);this.previousElementSibling.value=this.value;renderProps();drawPrevOverlay()"><span style="font-size:9.5px;color:var(--muted);flex-shrink:0">°</span></div></div>`:'';
+  const gradientContent=`${tog('Enable Gradient Text','Replaces solid color with gradient','gradient',box?.gradient??false)}<div class="${box?.gradient?'':'dim'}"><div id="gradPreviewBar" style="height:20px;border-radius:6px;margin-bottom:8px;border:1px solid var(--border2);background:${gBarBg}"></div><div class="field"><div class="field-label">Direction</div><div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:3px;background:var(--panel2);border:1px solid var(--border2);border-radius:var(--rs);padding:3px">${gradDirBtns}</div></div>${customAngleRow}<div class="field"><div class="field-label">Color Stops</div><div id="gradStopsUI">${gColors.map((c,i)=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:5px"><label class="color-swatch grad-swatch" style="background:${c};width:26px;height:26px;flex-shrink:0;cursor:pointer"><input type="color" value="${c}" oninput="updGradColor(${i},this.value)"></label><input class="color-hex" type="text" value="${c}" placeholder="#rrggbb" style="flex:1;font-size:11px" oninput="updGradColor(${i},this.value.trim())"><span style="font-size:9px;color:var(--muted);flex-shrink:0">pos%</span><input class="slider-num" type="number" min="0" max="100" value="${gStops[i]??Math.round(i/(gColors.length-1)*100)}" style="width:44px;flex-shrink:0" oninput="updGradStop(${i},parseInt(this.value)||0)">${gColors.length>2?`<button onclick="rmGradStop(${i})" style="background:transparent;border:none;color:var(--red);cursor:pointer;font-size:15px;line-height:1;padding:0 2px;flex-shrink:0">×</button>`:''}</div>`).join('')}</div><button class="btn sm" style="width:100%;justify-content:center" onclick="addGradStop()">+ Add Color Stop</button></div></div>`;
   const mcSegs=parseSegments(box?.multiSegments||'');
   // Build preview — group by newline, respect per-segment align
   let mcPreviewHtml='';
@@ -972,11 +989,12 @@ function renderProps(){
         const segW=s.weight||box?.fontWeight||'medium';
         const fwCss=fwMap2[segW]||'400';
         const op=(s.opacity!==undefined?s.opacity:100)/100;
-        return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fwCss};opacity:${op};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
+        return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fwCss};opacity:${op};visibility:${op===0?'hidden':'visible'};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
       }).join('<span style="font-size:3px"> </span>');
-      return`<div style="display:flex;white-space:nowrap;padding:1px 0;transform:translateX(${off}%)">${spans}</div>`;
+      const align=off<=15?'left':off>=85?'right':'center';
+      return`<div style="width:100%;text-align:${align};white-space:nowrap;overflow:hidden;padding:1px 0">${spans}</div>`;
     }).join('');
-    mcPreviewHtml=`<div id="mcPreviewBar" style="background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);padding:6px 10px;margin-bottom:8px;display:flex;flex-direction:column;overflow:hidden;min-height:28px">${lineHtml}</div>`;
+    mcPreviewHtml=`<div id="mcPreviewBar" style="background:var(--bg);border:1px solid var(--border2);border-radius:var(--rs);padding:4px 8px;margin-bottom:8px;overflow:hidden;min-height:28px">${lineHtml}</div>`;
   }
 
   const mcRows=mcSegs.length?mcSegs.map((seg,i)=>{
@@ -1014,8 +1032,8 @@ function renderProps(){
   </div>
   <div style="display:flex;align-items:center;gap:5px">
     <span style="font-size:9px;color:var(--muted);flex-shrink:0;width:42px">Opacity</span>
-    <input type="range" min="0" max="100" step="1" value="${segOp}" style="flex:1;accent-color:var(--accent);height:3px;cursor:pointer" oninput="updSegOpacity(${i},this.value);this.nextElementSibling.textContent=this.value+'%'">
-    <span style="font-size:10px;color:var(--cyan);font-family:monospace;width:32px;text-align:right;flex-shrink:0">${segOp}%</span>
+    <input type="range" min="0" max="100" step="1" value="${segOp}" id="segop_${i}" style="flex:1;accent-color:var(--accent);height:3px;cursor:pointer" oninput="updSegOpacity(${i},parseInt(this.value));document.getElementById('segopv_${i}').textContent=this.value+'%'">
+    <span id="segopv_${i}" style="font-size:10px;color:var(--cyan);font-family:monospace;width:32px;text-align:right;flex-shrink:0">${segOp}%</span>
     <button onclick="dupSeg(${i})" title="Duplicate segment" style="background:transparent;border:1px solid var(--border2);color:var(--muted2);border-radius:3px;cursor:pointer;font-size:10px;padding:2px 5px;flex-shrink:0">⊕</button>
     <button onclick="moveSegUp(${i})" title="Move up" style="background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:11px;padding:0 1px;flex-shrink:0">↑</button>
     <button onclick="moveSegDown(${i})" title="Move down" style="background:transparent;border:none;color:var(--muted2);cursor:pointer;font-size:11px;padding:0 1px;flex-shrink:0">↓</button>
@@ -1033,16 +1051,16 @@ function updBox(k,v){const boxes=getCurBoxes();const ids=ST.multiSel.length>1?ST
 function invalidateCache(){ST.screenshots.forEach((_,i)=>{(ST.csv?.langs||[]).forEach(l=>{delete ST.cache[`${i}_${l}`];});});}
 
 // ════ RENDERER ════
-function getFontWeight(box){const w=(box.fontWeight||'bold').toLowerCase();if(w==='medium'||w==='400')return'400';if(w==='semibold'||w==='600')return'600';if(w==='extrabold'||w==='800')return'800';return'700';/* bold default */}
+function getFontWeight(box){if(box.fontWeightNum)return String(box.fontWeightNum);const w=(box.fontWeight||'bold').toLowerCase();if(w==='medium'||w==='400')return'400';if(w==='semibold'||w==='600')return'600';if(w==='extrabold'||w==='800')return'800';return'700';}
 function parseSegments(str){if(!str||!str.trim())return[];const lines=str.includes('\n')?str.split('\n'):str.split(';;');const segs=[];for(const line of lines){const trimmed=line.trim();if(!trimmed)continue;const parts=trimmed.split('|');if(parts.length>=2){// field[4]: offset 0-100 (or legacy align string → convert)
 const raw4=parts[4]??'';let off=50;if(raw4==='left'||raw4==='0')off=0;else if(raw4==='right'||raw4==='100')off=100;else if(raw4==='center'||raw4==='')off=50;else{const n=parseFloat(raw4);off=isNaN(n)?50:Math.min(100,Math.max(0,n));}segs.push({text:parts[0]||'',color:parts[1]||'#ffffff',size:parseFloat(parts[2])||null,newline:parts[3]==='1',offset:off,weight:parts[5]||'',opacity:parts[6]!==undefined&&parts[6]!==''?parseFloat(parts[6]):100,italic:parts[7]==='1'});}}return segs;}
-function buildGradient(ctx,box,bx,by,bw,bh,scale){const colors=box.gradientColors||['#6C8EFF','#A78BFA'];const stops=box.gradientStops||colors.map((_,i)=>Math.round(i/(colors.length-1)*100));const dir=box.gradientDir||'horizontal';let grad;if(dir==='radial'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.max(bw,bh)/2);}else if(dir==='center'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.min(bw,bh)/2);}else if(dir==='vertical'){grad=ctx.createLinearGradient(bx,by,bx,by+bh);}else if(dir==='diagonal'){grad=ctx.createLinearGradient(bx,by,bx+bw,by+bh);}else if(dir==='diag2'){grad=ctx.createLinearGradient(bx+bw,by,bx,by+bh);}else{grad=ctx.createLinearGradient(bx,by,bx+bw,by);}colors.forEach((c,i)=>{try{grad.addColorStop(Math.min(1,Math.max(0,(stops[i]??Math.round(i/(colors.length-1)*100))/100)),c);}catch(e){}});return grad;}
+function buildGradient(ctx,box,bx,by,bw,bh,scale){const colors=box.gradientColors||['#6C8EFF','#A78BFA'];const stops=box.gradientStops||colors.map((_,i)=>Math.round(i/(colors.length-1)*100));const dir=box.gradientDir||'horizontal';const customAngle=box.gradientAngle??45;let grad;if(dir==='radial'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.max(bw,bh)/2);}else if(dir==='center'){grad=ctx.createRadialGradient(bx+bw/2,by+bh/2,0,bx+bw/2,by+bh/2,Math.min(bw,bh)/2);}else if(dir==='radial-tr'){grad=ctx.createRadialGradient(bx+bw,by,0,bx+bw/2,by+bh/2,Math.max(bw,bh));}else if(dir==='radial-tl'){grad=ctx.createRadialGradient(bx,by,0,bx+bw/2,by+bh/2,Math.max(bw,bh));}else if(dir==='vertical'){grad=ctx.createLinearGradient(bx,by,bx,by+bh);}else if(dir==='diagonal'){grad=ctx.createLinearGradient(bx,by,bx+bw,by+bh);}else if(dir==='diag2'){grad=ctx.createLinearGradient(bx+bw,by,bx,by+bh);}else if(dir==='diag3'){grad=ctx.createLinearGradient(bx,by+bh,bx+bw,by);}else if(dir==='diag4'){grad=ctx.createLinearGradient(bx+bw,by+bh,bx,by);}else if(dir==='custom'){const a=(customAngle-90)*Math.PI/180;const cx=bx+bw/2,cy=by+bh/2;const dx=Math.cos(a)*Math.max(bw,bh)/2,dy=Math.sin(a)*Math.max(bw,bh)/2;grad=ctx.createLinearGradient(cx-dx,cy-dy,cx+dx,cy+dy);}else{grad=ctx.createLinearGradient(bx,by,bx+bw,by);}colors.forEach((c,i)=>{try{grad.addColorStop(Math.min(1,Math.max(0,(stops[i]??Math.round(i/(colors.length-1)*100))/100)),c);}catch(e){}});return grad;}
 function drawTextOnCanvas(ctx,box,text,bx,by,bw,bh,pad,scale){
   scale=scale||1;const innerW=bw-pad*2;const innerH=bh-pad*2;
-  const weight=getFontWeight(box);const fStyle=box.italic?'italic':'normal';const fam=box.fontFamily||'sans-serif';const rtl=box.rtl||false;
+  const weight=getFontWeight(box);const italicDeg=box.italicDeg??0;const fStyle=italicDeg===0?'normal':italicDeg>=14?'italic':`oblique ${italicDeg}deg`;const fam=box.fontFamily||'sans-serif';const rtl=box.rtl||false;
   let fs=(box.fontSize||44)*scale;
   ctx.save();if(box.rotation){const cx=bx+bw/2,cy=by+bh/2;ctx.translate(cx,cy);ctx.rotate((box.rotation||0)*Math.PI/180);ctx.translate(-cx,-cy);}
-  ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();ctx.direction=rtl?'rtl':'ltr';ctx.textBaseline='alphabetic';ctx.textAlign=box.align||'center';
+  ctx.beginPath();ctx.rect(bx,by,bw,bh);ctx.clip();ctx.direction=rtl?'rtl':'ltr';ctx.textBaseline='alphabetic';ctx.textAlign='left';
 
   // Multi-color mode
   if(box.multiColor&&box.multiSegments){
@@ -1057,11 +1075,21 @@ function drawTextOnCanvas(ctx,box,text,bx,by,bw,bh,pad,scale){
   if(box.autoFit!==false){const lhM=box.lineSpacing??1.0;let iters=0;if(doWrap){while(fs>6*scale&&iters++<100){if(lines.length*fs*lhM<=innerH&&!lines.some(l=>{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;return ctx.measureText(l).width>innerW;}))break;fs=Math.max(6*scale,fs-1*scale);lines=wT(fs);}}else{ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;while(fs>6*scale&&ctx.measureText(lines[0]).width>innerW&&iters++<200){fs=Math.max(6*scale,fs-1*scale);ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;}}}
   if(doWrap&&box.maxLines&&box.maxLines>0)lines=lines.slice(0,box.maxLines);
   ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;const lh=fs*(box.lineSpacing??1.0);const totalH=lines.length*lh;
-  if(box.bg){const bgP=(box.bgPadding??8)*scale;let bgY=by+pad;if(box.valign==='middle')bgY=by+pad+(innerH-totalH)/2-bgP;else if(box.valign==='bottom')bgY=by+bh-pad-totalH-bgP;else bgY=by+pad-bgP;ctx.fillStyle=hexToRgba(box.bgColor||'#000000',(box.bgOpacity??50)/100);rRect(ctx,bx+pad-bgP,bgY,innerW+bgP*2,totalH+bgP*2,(box.bgRadius??6)*scale);ctx.fill();}
+  const vPos=(box.valignY??50)/100;
+  const hPos=(box.alignX??50)/100;
+  if(box.bg){const bgP=(box.bgPadding??8)*scale;const bgY=by+pad+(innerH-totalH)*vPos-bgP;ctx.fillStyle=hexToRgba(box.bgColor||'#000000',(box.bgOpacity??50)/100);rRect(ctx,bx+pad-bgP,bgY,innerW+bgP*2,totalH+bgP*2,(box.bgRadius??6)*scale);ctx.fill();}
   if(box.shadow){ctx.shadowColor=hexToRgba(box.shadowColor||'#000000',(box.shadowOpacity??65)/100);ctx.shadowBlur=(box.shadowBlur??8)*scale;ctx.shadowOffsetX=(box.shadowOffsetX??3)*scale;ctx.shadowOffsetY=(box.shadowOffsetY??3)*scale;}
-  let ty=by+pad;if(box.valign==='middle')ty=by+pad+(innerH-totalH)/2;else if(box.valign==='bottom')ty=by+bh-pad-totalH;ty+=fs*0.78;
-  const txX=box.align==='left'?bx+pad:box.align==='right'?bx+bw-pad:bx+bw/2;const ls=(box.letterSpacing||0)*scale;
-  for(const line of lines){if(box.stroke){ctx.strokeStyle=box.strokeColor||'#000000';ctx.lineWidth=(box.strokeWidth??2)*scale;ctx.lineJoin='round';if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,true);else ctx.strokeText(line,txX,ty);}ctx.fillStyle=col;ctx.shadowBlur=box.shadow?(box.shadowBlur??8)*scale:0;ctx.shadowOffsetX=box.shadow?(box.shadowOffsetX??3)*scale:0;ctx.shadowOffsetY=box.shadow?(box.shadowOffsetY??3)*scale:0;if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,false);else ctx.fillText(line,txX,ty);ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;ty+=lh;}
+  let ty=by+pad+(innerH-totalH)*vPos+fs*0.78;
+  const ls=(box.letterSpacing||0)*scale;
+  for(const line of lines){
+    ctx.font=`${fStyle} ${weight} ${fs}px "${fam}"`;
+    const lineW=ctx.measureText(line).width;
+    const txX=bx+pad+(innerW-lineW)*hPos;
+    if(box.stroke){ctx.strokeStyle=box.strokeColor||'#000000';ctx.lineWidth=(box.strokeWidth??2)*scale;ctx.lineJoin='round';if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,true,'left');else ctx.strokeText(line,txX,ty);}
+    ctx.fillStyle=col;ctx.shadowBlur=box.shadow?(box.shadowBlur??8)*scale:0;ctx.shadowOffsetX=box.shadow?(box.shadowOffsetX??3)*scale:0;ctx.shadowOffsetY=box.shadow?(box.shadowOffsetY??3)*scale:0;
+    if(ls!==0)drawSpaced(ctx,line,txX,ty,ls,false,'left');else ctx.fillText(line,txX,ty);
+    ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;ty+=lh;
+  }
   ctx.restore();ctx.direction='ltr';ctx.shadowBlur=0;ctx.shadowOffsetX=0;ctx.shadowOffsetY=0;
 }
 function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fStyle,fam){
@@ -1125,9 +1153,8 @@ function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fSty
 
   // ── Step 3: Total height & vertical position ──
   const totalH=renderLines.reduce((a,l)=>a+l.lineH,0);
-  let ty=by+pad;
-  if(box.valign==='middle')ty=by+pad+(innerH-totalH)/2;
-  else if(box.valign==='bottom')ty=by+bh-pad-totalH;
+  const vPos=(box.valignY??50)/100;
+  let ty=by+pad+(innerH-totalH)*vPos;
 
   // ── Step 4: Background box ──
   if(box.bg){
@@ -1158,6 +1185,7 @@ function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fSty
     for(const seg of rline.segments){
       ctx.font=`${seg.segFStyle} ${seg.segFw} ${seg.sz}px "${fam}"`;
       ctx.globalAlpha=seg.op;
+      if(seg.op>0){
       if(box.stroke){
         ctx.strokeStyle=box.strokeColor||'#000000';
         ctx.lineWidth=(box.strokeWidth??2)*scale;
@@ -1166,6 +1194,7 @@ function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fSty
       }
       ctx.fillStyle=seg.color;
       ctx.fillText(seg.text,tx,baseline);
+      }
       ctx.globalAlpha=1;
       tx+=ctx.measureText(seg.text).width+ls;
     }
@@ -1173,7 +1202,7 @@ function drawMultiColorText(ctx,box,segs,_text,bx,by,bw,bh,pad,scale,weight,fSty
     ty+=rline.lineH;
   }
 }
-function drawSpaced(ctx,line,tx,ty,ls,stroke){let lw=0;for(const ch of line)lw+=ctx.measureText(ch).width+ls;let lx=tx;if(ctx.textAlign==='center')lx=tx-lw/2;else if(ctx.textAlign==='right')lx=tx-lw;for(const ch of line){if(stroke)ctx.strokeText(ch,lx,ty);else ctx.fillText(ch,lx,ty);lx+=ctx.measureText(ch).width+ls;}}
+function drawSpaced(ctx,line,tx,ty,ls,stroke,align){let lw=0;for(const ch of line)lw+=ctx.measureText(ch).width+ls;let lx=tx;if((align||ctx.textAlign)==='center')lx=tx-lw/2;else if((align||ctx.textAlign)==='right')lx=tx-lw;for(const ch of line){if(stroke)ctx.strokeText(ch,lx,ty);else ctx.fillText(ch,lx,ty);lx+=ctx.measureText(ch).width+ls;}}
 function rRect(ctx,x,y,w,h,r){r=Math.min(r,w/2,h/2,10);ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();}
 function hexToRgba(hex,alpha){let h=(hex||'#000000').replace('#','');if(h.length===3)h=h[0]+h[0]+h[1]+h[1]+h[2]+h[2];const r=parseInt(h.slice(0,2),16)||0,g=parseInt(h.slice(2,4),16)||0,b=parseInt(h.slice(4,6),16)||0;return`rgba(${r},${g},${b},${clamp(alpha??1,0,1)})`;}
 
@@ -1184,9 +1213,12 @@ function _refreshGradPreviewBar(){
   const colors=box.gradientColors||['#6C8EFF','#A78BFA'];
   const stops=box.gradientStops||colors.map((_,i)=>Math.round(i/(colors.length-1)*100));
   const dir=box.gradientDir||'horizontal';
-  const cssDir=dir==='vertical'?'to bottom':dir==='diagonal'?'135deg':dir==='diag2'?'225deg':(dir==='radial'||dir==='center')?'circle':'to right';
+  const customAngle=box.gradientAngle??45;
+  const isRadialType=(dir==='radial'||dir==='center'||dir==='radial-tr'||dir==='radial-tl');
+  const cssDir=dir==='vertical'?'to bottom':dir==='horizontal'?'to right':dir==='diagonal'?'135deg':dir==='diag2'?'225deg':dir==='diag3'?'45deg':dir==='diag4'?'315deg':dir==='custom'?customAngle+'deg':isRadialType?'circle':'to right';
   const stopsStr=colors.map((c,i)=>`${c} ${stops[i]??Math.round(i/(colors.length-1)*100)}%`).join(',');
-  bar.style.background=(dir==='radial'||dir==='center')?`radial-gradient(${cssDir}, ${stopsStr})`:`linear-gradient(${cssDir}, ${stopsStr})`;
+  const radialPos=dir==='radial-tr'?'at top right':dir==='radial-tl'?'at top left':'';
+  bar.style.background=isRadialType?`radial-gradient(circle ${radialPos}, ${stopsStr})`:`linear-gradient(${cssDir}, ${stopsStr})`;
 }
 function _refreshMcPreview(){
   // Rebuild only the preview bar above segment rows, without full renderProps
@@ -1203,9 +1235,10 @@ function _refreshMcPreview(){
     const spans=grp.map(s=>{
       const fw=fwMap[s.weight||box.fontWeight||'medium']||'400';
       const op=(s.opacity!==undefined?s.opacity:100)/100;
-      return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fw};opacity:${op};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
+      return`<span style="color:${s.color||'#fff'};font-size:${Math.min(s.size||44,13)}px;font-weight:${fw};opacity:${op};visibility:${op===0?'hidden':'visible'};font-style:${s.italic?'italic':'normal'}">${s.text}</span>`;
     }).join('<span style="font-size:3px"> </span>');
-    return`<div style="display:flex;white-space:nowrap;padding:1px 0;transform:translateX(${ml});transition:transform .1s">${spans}</div>`;
+      const pAlign=off<=15?'left':off>=85?'right':'center';
+      return`<div style="width:100%;text-align:${pAlign};white-space:nowrap;overflow:hidden;padding:1px 0">${spans}</div>`;
   }).join('');
 }
 function updGradColor(i,val){
@@ -1236,7 +1269,7 @@ function _patchSeg(i,patch){const box=_getBox();if(!box)return;const segs=parseS
 function updSegText(i,v){_patchSeg(i,{text:v});drawPrevOverlay();}
 function updSegColor(i,v){_patchSeg(i,{color:v});const swatches=document.querySelectorAll('#mcSegRows .mc-swatch');if(swatches[i])swatches[i].style.background=v;drawPrevOverlay();}
 function updSegSize(i,v){_patchSeg(i,{size:parseFloat(v)||44});drawPrevOverlay();}
-function updSegOpacity(i,v){_patchSeg(i,{opacity:parseFloat(v)||100});drawPrevOverlay();}
+function updSegOpacity(i,v){const op=Math.max(0,Math.min(100,parseInt(v)));_patchSeg(i,{opacity:isNaN(op)?100:op});drawPrevOverlay();_refreshMcPreview();}
 function updSegOffset(i,v){_patchSeg(i,{offset:parseFloat(v)});// update preview label in-place without full re-render
 const label=document.querySelector(`#mcSegRows [data-segoff="${i}"]`);if(label)label.textContent=Math.round(v)+'%';drawPrevOverlay();_refreshMcPreview();}
 function updSegWeight(i,v){_patchSeg(i,{weight:v});renderProps();drawPrevOverlay();}
