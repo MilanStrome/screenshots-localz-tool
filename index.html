@@ -265,6 +265,26 @@ select.finput option{background:#1a1d2e}
 code{background:var(--panel2);padding:1px 4px;border-radius:3px;font-size:10px;font-family:monospace;color:var(--muted2)}
 .finput[rows]{resize:vertical;min-height:60px}
 .grad-stop-row{display:flex;align-items:center;gap:5px;margin-bottom:4px}
+.lo-block{border:1px solid var(--border2);border-radius:var(--rs);margin-bottom:5px;overflow:hidden}
+.lo-head{display:flex;align-items:center;gap:6px;padding:6px 9px;cursor:pointer;user-select:none;background:var(--panel2);transition:.15s}
+.lo-head:hover{background:var(--panel3)}
+.lo-head.has-ov{border-left:3px solid var(--accent2);background:#a78bfa0a}
+.lo-body{padding:8px 10px;display:flex;flex-direction:column;gap:7px;border-top:1px solid var(--border)}
+.lo-lang-pill{font-size:9px;font-weight:800;font-family:monospace;padding:2px 6px;border-radius:10px;background:var(--panel3);border:1px solid var(--border2);flex-shrink:0}
+.lo-lang-pill.rtl{border-color:var(--orange)33;color:var(--orange)}
+.lo-arr{font-size:8px;color:var(--muted);transition:transform .2s;flex-shrink:0}
+.lo-arr.open{transform:rotate(90deg)}
+.lo-name{font-size:11px;font-weight:500;flex:1;color:var(--muted2)}
+.lo-badges{display:flex;gap:3px;flex-wrap:wrap}
+.lo-badge{font-size:8px;padding:1px 5px;border-radius:8px;background:var(--accent2)22;color:var(--accent2);border:1px solid var(--accent2)33;font-weight:600}
+.ov-field{display:flex;align-items:center;gap:6px}
+.ov-lbl{font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--muted2);width:72px;flex-shrink:0}
+.ov-del{background:transparent;border:1px solid var(--red)33;color:var(--red);cursor:pointer;font-size:10px;border-radius:3px;padding:1px 5px;flex-shrink:0;line-height:1.4}
+.ov-del:hover{background:var(--red)22}
+.add-ov-grid{display:grid;grid-template-columns:1fr 1fr;gap:3px;margin-top:4px}
+.add-ov-btn{font-size:10px;padding:4px 6px;border-radius:var(--rf);border:1px solid var(--border2);background:var(--panel3);color:var(--muted2);cursor:pointer;text-align:center;transition:.15s;user-select:none}
+.add-ov-btn:hover{border-color:var(--accent2);color:var(--accent2);background:#a78bfa0a}
+.add-ov-btn.used{opacity:.35;pointer-events:none}
 </style>
 </head>
 <body>
@@ -863,7 +883,13 @@ function drawPrevOverlay(){
   const sx=iw/scr.w;
   getCurBoxes().filter(b=>b.key).forEach(box=>{const row=ST.csv.rows.find(r=>r.key===box.key);if(!row)return;const effectiveBox=getLangBox(box,lang);const text=(row[lang]||row['en']||'').trim();if(!text)return;const bx=box.x/100*iw,by=box.y/100*ih,bw=box.w/100*iw,bh=box.h/100*ih;drawTextOnCanvas(ctx,effectiveBox,text,bx,by,bw,bh,(effectiveBox.padding??6)*sx,sx);});
 }
-function getLangBox(box,lang){const override=ST.langFonts[lang];if(override)return{...box,fontFamily:override,rtl:isRTL(lang)};return{...box,rtl:box.rtl||isRTL(lang)};}
+function getLangBox(box,lang){
+  const fontOverride=ST.langFonts[lang];
+  const langOv=(box.langOverrides||{})[lang]||{};
+  const base={...box, rtl:box.rtl||isRTL(lang)};
+  if(fontOverride)base.fontFamily=fontOverride;
+  return Object.keys(langOv).length?{...base,...langOv}:base;
+}
 function isRTL(lang){return['ar','he','fa','ur','yi','ku'].includes((lang||'').toLowerCase());}
 
 function drawBoxEl(box,wrap,scrWarns={}){
@@ -955,7 +981,61 @@ function renderProps(){
   const shadowContent=`${tog('Enable Shadow','','shadow',box?.shadow??false)}<div class="${box?.shadow?'':'dim'}">${cc('Color','shadowColor',box?.shadowColor||'#000000')}${sl('Opacity','shadowOpacity',0,100,1,box?.shadowOpacity??65,'%','var(--cyan)')}${sl('Blur','shadowBlur',0,80,1,box?.shadowBlur??8,'px')}<div class="field-row">${sl('Offset X','shadowOffsetX',-60,60,1,box?.shadowOffsetX??3,'px')}${sl('Offset Y','shadowOffsetY',-60,60,1,box?.shadowOffsetY??3,'px')}</div></div>`;
   const strokeContent=`${tog('Enable Stroke','','stroke',box?.stroke??false)}<div class="${box?.stroke?'':'dim'}">${cc('Color','strokeColor',box?.strokeColor||'#000000')}${sl('Width','strokeWidth',0.5,30,0.5,box?.strokeWidth??2,'px')}</div>`;
   const bgContent=`${tog('Enable Background','','bg',box?.bg??false)}<div class="${box?.bg?'':'dim'}">${cc('Color','bgColor',box?.bgColor||'#000000')}${sl('Opacity','bgOpacity',0,100,1,box?.bgOpacity??50,'%','var(--cyan)')}${sl('Padding','bgPadding',0,60,1,box?.bgPadding??8,'px')}${sl('Radius','bgRadius',0,60,1,box?.bgRadius??6,'px')}</div>`;
-  const rtlContent=`${tog('Force RTL','For Arabic, Hebrew, Persian…','rtl',box?.rtl??false)}<div style="height:4px"></div><div class="field"><div class="field-label" style="color:var(--accent2)">Per-Language Font Override</div>${(ST.csv?.langs||[]).map(l=>`<div style="display:flex;align-items:center;gap:5px;margin-bottom:4px"><span style="font-size:9.5px;font-weight:700;font-family:monospace;color:${isRTL(l)?'var(--orange)':'var(--muted2)'};min-width:26px">${l}</span><select class="finput" style="flex:1;font-size:11px" onchange="setLangFont('${l}',this.value)"><option value="">Default</option>${ST.fonts.map(f=>`<option value="${f.familyName}"${ST.langFonts[l]===f.familyName?' selected':''}>${f.source==='google'?'🌐 ':''}${f.name}</option>`).join('')}</select></div>`).join('')}</div>`;
+  // ── Per-language override UI ──
+  const OV_PROPS=[
+    {key:'fontFamily',  label:'Font',      type:'font'},
+    {key:'fontSize',    label:'Size',      type:'number', min:6,  max:300, step:1,  suffix:'px', col:'var(--cyan)'},
+    {key:'fontWeightNum',label:'Weight',   type:'number', min:100,max:900, step:100,suffix:'',  col:'var(--accent2)'},
+    {key:'italicDeg',   label:'Italic°',   type:'number', min:0,  max:45,  step:1,  suffix:'°', col:'var(--orange)'},
+    {key:'color',       label:'Color',     type:'color'},
+    {key:'colorOpacity',label:'Opacity',   type:'number', min:0,  max:100, step:1,  suffix:'%', col:'var(--cyan)'},
+    {key:'alignX',      label:'H-Pos',     type:'number', min:0,  max:100, step:1,  suffix:'%', col:'var(--accent)'},
+    {key:'valignY',     label:'V-Pos',     type:'number', min:0,  max:100, step:1,  suffix:'%', col:'var(--accent2)'},
+    {key:'lineSpacing', label:'Line Sp.',  type:'number', min:0.6,max:3,   step:0.05,suffix:'×',col:'var(--accent2)'},
+    {key:'letterSpacing',label:'Letter Sp',type:'number', min:-8, max:40,  step:1,  suffix:'px',col:'var(--muted2)'},
+    {key:'padding',     label:'Padding',   type:'number', min:0,  max:60,  step:1,  suffix:'px',col:'var(--muted2)'},
+    {key:'rotation',    label:'Rotation',  type:'number', min:-180,max:180,step:1,  suffix:'°', col:'var(--orange)'},
+  ];
+  const langBlocks=(ST.csv?.langs||[]).map(lang=>{
+    const ov=(box?.langOverrides||{})[lang]||{};
+    const hasOv=Object.keys(ov).length>0;
+    const openId=`lo_${box?.id}_${lang}`;
+    const isOpen=!!(window._loOpen&&window._loOpen[openId]);
+    const rtlLang=isRTL(lang);
+    const badges=Object.keys(ov).map(k=>{const p=OV_PROPS.find(x=>x.key===k);return p?`<span class="lo-badge">${p.label}</span>`:''}).join('');
+    // Build active override controls
+    const ovControls=Object.keys(ov).map(propKey=>{
+      const p=OV_PROPS.find(x=>x.key===propKey);if(!p)return'';
+      const val=ov[propKey];
+      let ctrl='';
+      if(p.type==='color'){
+        ctrl=`<label class="color-swatch" style="background:${val};width:22px;height:22px;flex-shrink:0"><input type="color" value="${val}" oninput="setLangOv('${box?.id}','${lang}','${propKey}',this.value);this.parentElement.style.background=this.value;drawPrevOverlay();invalidateCache()"></label><input class="color-hex" type="text" value="${val}" style="flex:1;font-size:10px" oninput="setLangOv('${box?.id}','${lang}','${propKey}',this.value);this.previousElementSibling.style.background=this.value;drawPrevOverlay();invalidateCache()">`;
+      } else if(p.type==='font'){
+        ctrl=`<select class="finput" style="flex:1;font-size:10px" onchange="setLangOv('${box?.id}','${lang}','${propKey}',this.value);drawPrevOverlay();invalidateCache()"><option value="">Default</option>${ST.fonts.map(f=>`<option value="${f.familyName}"${val===f.familyName?' selected':''}>${f.source==='google'?'🌐 ':''}${f.name}</option>`).join('')}</select>`;
+      } else {
+        ctrl=`<input type="range" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}" style="flex:1;accent-color:${p.col||'var(--accent)'};height:3px;cursor:pointer" oninput="setLangOv('${box?.id}','${lang}','${propKey}',${p.step<1?'parseFloat':'parseInt'}(this.value));this.nextElementSibling.value=this.value;drawPrevOverlay();invalidateCache()"><input type="number" min="${p.min}" max="${p.max}" step="${p.step}" value="${val}" class="slider-num" style="color:${p.col||'var(--accent)'}" oninput="setLangOv('${box?.id}','${lang}','${propKey}',${p.step<1?'parseFloat':'parseInt'}(this.value));this.previousElementSibling.value=this.value;drawPrevOverlay();invalidateCache()"><span style="font-size:9px;color:var(--muted);flex-shrink:0">${p.suffix||''}</span>`;
+      }
+      return`<div class="ov-field"><span class="ov-lbl">${p.label}</span>${ctrl}<button class="ov-del" onclick="rmLangOv('${box?.id}','${lang}','${propKey}')" title="Remove override">×</button></div>`;
+    }).join('');
+    // Add-property buttons — only show props not yet overridden
+    const addBtns=OV_PROPS.filter(p=>!(p.key in ov)).map(p=>`<div class="add-ov-btn" onclick="addLangOv('${box?.id}','${lang}','${p.key}')">+ ${p.label}</div>`).join('');
+    const bodyHtml=isOpen?`<div class="lo-body">
+      ${ovControls||''}
+      <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-top:${Object.keys(ov).length?'6px':'0'}">Add Override</div>
+      <div class="add-ov-grid">${addBtns||'<span style="font-size:10px;color:var(--muted);grid-column:1/-1">All properties overridden</span>'}</div>
+    </div>`:'';
+    return`<div class="lo-block"><div class="lo-head${hasOv?' has-ov':''}" onclick="toggleLangOv('${box?.id}','${lang}')">
+      <span class="lo-lang-pill${rtlLang?' rtl':''}">${lang.toUpperCase()}</span>
+      <span class="lo-name">${hasOv?'Custom style':'Default style'}</span>
+      <div class="lo-badges">${badges}</div>
+      <span class="lo-arr${isOpen?' open':''}">▶</span>
+    </div>${bodyHtml}</div>`;
+  }).join('');
+  const rtlContent=`${tog('Force RTL','For Arabic, Hebrew, Persian…','rtl',box?.rtl??false)}
+  <div style="height:6px"></div>
+  <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--accent2);margin-bottom:6px">🎨 Per-Language Style Overrides</div>
+  <div style="font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.5">Override any style property for a specific language. Other languages stay unaffected.</div>
+  ${langBlocks||'<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:8px">Load a CSV with languages first.</div>'}`;
   const presetsContent=`<div style="display:flex;gap:5px;margin-bottom:6px"><button class="btn sm" style="flex:1;justify-content:center" onclick="showSavePresetModal()">💾 Save Style</button><button class="btn sm" style="flex:1;justify-content:center" onclick="exportPresets()">⬇ Export</button><label class="btn sm" style="flex:1;justify-content:center;cursor:pointer">⬆ Import<input type="file" accept=".json,.csv" style="display:none" onchange="importPresets(event)"></label></div>${ST.presets.length?`<div class="preset-grid">${ST.presets.map((p,i)=>`<div class="preset-item" onclick="applyPreset(${i})"><div class="preset-dot" style="background:${p.gradient?`linear-gradient(90deg,${(p.gradientColors||['#6C8EFF','#A78BFA']).join(',')})`:p.color}"></div><div class="preset-name">${p.name}</div><div class="preset-apply">Apply</div><div class="preset-del" onclick="event.stopPropagation();deletePreset(${i})">×</div></div>`).join('')}</div>`:`<div style="font-size:10.5px;color:var(--muted);text-align:center;padding:6px">No presets saved yet.</div>`}`;
 
   const gdir=box?.gradientDir||'horizontal';
@@ -1047,6 +1127,42 @@ function renderProps(){
 function togAcc(id){OPEN_SECS[id]=!OPEN_SECS[id];renderProps();}
 function toggleLock(id){if(!id)return;ST.locked[id]=!ST.locked[id];renderCanvas();renderProps();}
 function setLangFont(lang,fam){ST.langFonts[lang]=fam||undefined;if(!fam)delete ST.langFonts[lang];drawPrevOverlay();invalidateCache();}
+
+// ════ LANG OVERRIDES ════
+window._loOpen={};
+function toggleLangOv(boxId,lang){
+  const key=`lo_${boxId}_${lang}`;
+  window._loOpen[key]=!window._loOpen[key];
+  renderProps();
+}
+function setLangOv(boxId,lang,prop,val){
+  const boxes=getCurBoxes();
+  const box=boxes.find(b=>b.id===boxId);if(!box)return;
+  if(!box.langOverrides)box.langOverrides={};
+  if(!box.langOverrides[lang])box.langOverrides[lang]={};
+  box.langOverrides[lang][prop]=val;
+  setCurBoxes(boxes);invalidateCache();
+}
+function rmLangOv(boxId,lang,prop){
+  const boxes=getCurBoxes();
+  const box=boxes.find(b=>b.id===boxId);if(!box)return;
+  if(!box.langOverrides||!box.langOverrides[lang])return;
+  delete box.langOverrides[lang][prop];
+  if(!Object.keys(box.langOverrides[lang]).length)delete box.langOverrides[lang];
+  setCurBoxes(boxes);invalidateCache();renderProps();drawPrevOverlay();
+}
+function addLangOv(boxId,lang,prop){
+  const boxes=getCurBoxes();
+  const box=boxes.find(b=>b.id===boxId);if(!box)return;
+  if(!box.langOverrides)box.langOverrides={};
+  if(!box.langOverrides[lang])box.langOverrides[lang]={};
+  // Set a sensible default for the property
+  const defaults={fontFamily:'',fontSize:box.fontSize||44,fontWeightNum:box.fontWeightNum||700,italicDeg:0,color:box.color||'#ffffff',colorOpacity:100,alignX:box.alignX??50,valignY:box.valignY??50,lineSpacing:box.lineSpacing||1.0,letterSpacing:0,padding:box.padding||6,rotation:0};
+  box.langOverrides[lang][prop]=defaults[prop]??0;
+  // Auto-open this language panel
+  window._loOpen[`lo_${boxId}_${lang}`]=true;
+  setCurBoxes(boxes);invalidateCache();renderProps();drawPrevOverlay();
+}
 function updBox(k,v){const boxes=getCurBoxes();const ids=ST.multiSel.length>1?ST.multiSel:[ST.selId];ids.forEach(id=>{const box=boxes.find(b=>b.id===id);if(box)box[k]=v;});setCurBoxes(boxes);const w=document.getElementById('cwrap');if(w){w.querySelectorAll('.tbox').forEach(e=>e.remove());const warns=checkOverflow();const scrWarns=warns[ST.screenshots[ST.activeIdx]?.id]||{};getCurBoxes().forEach(b=>drawBoxEl(b,w,scrWarns));}renderThumbs();invalidateCache();}
 function invalidateCache(){ST.screenshots.forEach((_,i)=>{(ST.csv?.langs||[]).forEach(l=>{delete ST.cache[`${i}_${l}`];});});}
 
